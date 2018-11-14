@@ -1,0 +1,26 @@
+{
+  "name": "soft352-yaniv",
+  "version": "1.0.0",
+  "description": "card game yaniv",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agargurnis/SOFT352-Yaniv.git"
+  },
+  "author": "Arvids Gargurnis",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/agargurnis/SOFT352-Yaniv/issues"
+  },
+  "homepage": "https://github.com/agargurnis/SOFT352-Yaniv#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "socket.io": "^2.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.6"
+  }
+}
