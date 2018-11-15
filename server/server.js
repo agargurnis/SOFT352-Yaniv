@@ -19,7 +19,15 @@ io.on('connection', function (socket) {
         io.sockets.emit('lobby-chat', data);
     })
 
+    socket.on('game-chat', function (data) {
+        io.sockets.emit('game-chat', data);
+    })
+
     socket.on('typing', function (data) {
         socket.broadcast.emit('typing', data);
+    })
+
+    socket.on('player-typing', function (data) {
+        socket.broadcast.emit('player-typing', data);
     })
 })

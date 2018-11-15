@@ -3,7 +3,8 @@ body {
 }
 
 #welcome-container,
-#lobby-container {
+#lobby-container,
+#game-container {
     height: 100vh;
     width: 100%;
     background-image: url("../assets/images/wallpaper.jpg");
@@ -32,7 +33,17 @@ body {
     color: white;
 }
 
+.off-white {
+    /* background-color: #e9e9e9; */
+}
+
 #chat-box {
+    margin: 15px 0 15px 15px;
+    padding-top: 1px;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+#game-chat-box {
     margin: 15px 0 15px 15px;
     padding-top: 1px;
     background-color: rgba(0, 0, 0, 0.8);
@@ -44,6 +55,18 @@ body {
     background-color: rgba(0, 0, 0, 0.8);
 }
 
+#game-table-box {
+    margin: 15px 0 15px 15px;
+    padding: 1px 0;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+#point-box {
+    margin: 15px 15px 15px 0;
+    padding: 1px 0;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
 #chat-window,
 #game-window {
     background-color: white;
@@ -51,17 +74,38 @@ body {
     margin: 15px 25px 15px 25px;
 }
 
+#game-chat-window {
+    background-color: white;
+    height: 13.5vh;
+    margin: 15px 25px 15px 25px;
+}
+
+#game-table-window {
+    background-color: white;
+    height: 68.8vh;
+    margin: 15px 25px 15px 25px;
+}
+
+#point-window {
+    background-color: white;
+    height: 92.5vh;
+    margin: 15px 25px 15px 25px;
+}
+
 #message-window,
-#button-window {
+#button-window,
+#game-message-window {
     padding-bottom: 20px;
     margin: 0 25px;
 }
 
-#message-input {
+#message-input,
+#game-message-input {
     width: 90%;
 }
 
-#send-btn {
+#send-btn,
+#game-send-btn {
     width: 9.5%;
 }
 
@@ -69,19 +113,22 @@ body {
     width: 100%;
 }
 
-#chat-output p {
+#chat-output p,
+#game-chat-output p {
     padding: 14px 0px;
     margin: 0 20px;
     border-bottom: 1px solid #e9e9e9;
     color: #555;
 }
 
-#typing-detector p {
+#typing-detector p,
+#game-typing-detector p {
     color: #aaa;
     padding: 14px 0px;
     margin: 0 20px;
 }
 
-#chat-output strong {
+#chat-output strong,
+#game-chat-output strong {
     color: #f74646;
 }
