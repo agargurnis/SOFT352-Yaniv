@@ -6,7 +6,7 @@ body {
 #lobby-container {
     height: 100vh;
     width: 100%;
-    background-image: url("../assets/wallpaper.jpg");
+    background-image: url("../assets/images/wallpaper.jpg");
     background-size: cover;
     background-position: center;
 }

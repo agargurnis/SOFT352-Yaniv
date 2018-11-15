@@ -1,3 +1,21 @@
+class Game {
+    constructor() {
+        this.cards = ['2-D', '2-C', '2-H', '3-S', '3-D', '3-C', '3-H', '3-S', '4-D', '4-C', '4-H', '4-S', '5-D', '5-C', '5-H', '5-S', '6-D', '6-C', '6-H', '6-S', '7-D', '7-C', '7-H', '7-S', '8-D', '8-C', '8-H', '8-S', '9-D', '9-C', '9-H', '9-S', '10-D', '10-C', '10-H', '10-S', 'jack-D', 'jack-C', 'jack-H', 'jack-S', 'queen-D', 'queen-C', 'queen-H', 'queen-S', 'king-D', 'king-C', 'king-H', 'king-S', 'ace-D', 'ace-C', 'ace-H', 'ace-S', 'joker-red', 'joker-red', 'joker-black', 'joker-black'];
+        this.players = new Array(4);
+    }
+}
+
+class Player {
+    constructor(nickname) {
+        this.nickname = nickname;
+        this.cardsOnHand = new Array(5);
+        this.points = 0;
+    }
+}
+
+// instantiate obejcts
+const player = new Player('temp');
+
 // make connection
 var socket = io.connect('http://localhost:4000');
 
@@ -16,12 +34,13 @@ var typingDetector = document.getElementById('typing-detector');
 continueBtn.addEventListener('click', function () {
     lobbyContainer.classList.remove('hidden');
     welcomeContainer.classList.add('hidden');
+    player.nickname = nicknameField.value;
 })
 
 sendBtn.addEventListener('click', function () {
-    socket.emit('chat', {
+    socket.emit('lobby-chat', {
         message: messageField.value,
-        handle: nicknameField.value
+        handle: player.nickname
     });
 })
 
@@ -30,7 +49,7 @@ messageField.addEventListener('keypress', function () {
 })
 
 // listen for events
-socket.on('chat', function (data) {
+socket.on('lobby-chat', function (data) {
     typingDetector.innerHTML = '';
     chatOutput.innerHTML += '<p><strong>' + data.handle + ': </strong>' + data.message + '</p>';
 })
