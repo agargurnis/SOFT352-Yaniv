@@ -24,6 +24,11 @@ const server = app.listen(4000, function () {
     console.log("---> server listening to port 4000");
 })
 
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    next();
+});
+
 // Body parser middleware
 app.use(bodyParser.urlencoded({
     extended: false

@@ -1,94 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Yaniv</title>
     <link href="css/main.css" type="text/css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-        crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+      integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+      crossorigin="anonymous"
+    />
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="assets/files/jquery-3.2.1.js"></script>
-</head>
+    <script src="javascript/lobby.js"></script>
+    <script src="javascript/auth.js"></script>
+  </head>
 
-<body>
+  <body>
+    <!-- Welcome Container -->
     <div id="welcome-container" class="text-center pt-5">
-        <div class="welcome pt-5 pb-5">
-            <h1>Welcome to the card game Yaniv</h1>
-            <h3 class=" pt-2">Please enter your nickname
-                below to continue</h3>
-            <input id="nickname-input" class="mt-3" type="text" placeholder="Nickname">
-            <button id="continue-btn" class="btn-primary pointer">Continue</button>
-        </div>
+      <!-- Login Form -->
+      <div id="login-form" class="welcome pt-5 pb-5">
+        <h1>Welcome to the card game Yaniv</h1>
+        <h3 class=" pt-2">Please sign into account to continue</h3>
+        <input
+          id="nickname-input"
+          class="mt-3"
+          type="text"
+          placeholder="Nickname"
+        />
+        <input
+          id="password-input"
+          class="mt-3"
+          type="password"
+          placeholder="Password"
+        />
+        <button
+          id="login-btn"
+          class="btn-primary pointer"
+          onclick="loginUser()"
+        >
+          Login
+        </button>
+        <h6 class="pointer pt-2">
+          No account yet? Click to register
+          <button id="register-form-btn" class="pointer text-button">
+            here
+          </button>
+        </h6>
+      </div>
+      <!-- Register Form -->
+      <div id="register-form" class="welcome pt-5 pb-5 hidden">
+        <h1>Welcome to the card game Yaniv</h1>
+        <h3 class=" pt-2">Please enter your details below to register</h3>
+        <input
+          id="nickname-register-input"
+          class="mt-3"
+          type="text"
+          placeholder="Nickname"
+        />
+        <input
+          id="password-register-input"
+          class="mt-3"
+          type="password"
+          placeholder="Password"
+        />
+        <button
+          id="register-btn"
+          class="btn-danger pointer"
+          onclick="registerUser()"
+        >
+          Register
+        </button>
+      </div>
     </div>
-
+    <!-- Lobby Container -->
     <div id="lobby-container" class="hidden">
-        <div class="row">
-            <div class="col-8">
-                <div id="chat-box">
-                    <h3 class="text-center box-title">Public Chat</h3>
-                    <div id="chat-window">
-                        <div id="chat-output"></div>
-                        <div id="typing-detector"></div>
-                    </div>
-                    <div id="message-window">
-                        <input id="message-input" type="text" placeholder="Message" />
-                        <button id="send-btn" class="pointer">Send</button>
-                    </div>
-                </div>
+      <div class="row">
+        <div class="col-8">
+          <div id="chat-box">
+            <h3 class="text-center box-title">Public Chat</h3>
+            <div id="chat-window">
+              <div id="chat-output"></div>
+              <div id="typing-detector"></div>
             </div>
-            <div class="col-4">
-                <div id="game-box">
-                    <h3 class="text-center box-title">Game Window</h3>
-                    <div id="game-window">
-                        <div id="game-output"></div>
-                    </div>
-                    <div id="button-window">
-                        <button id="create-btn" class="btn-success pointer">Create New Game</button>
-                    </div>
-                </div>
+            <div id="message-window">
+              <input id="message-input" type="text" placeholder="Message" />
+              <button id="send-btn" class="pointer">Send</button>
             </div>
+          </div>
         </div>
+        <div class="col-4">
+          <div id="game-box">
+            <h3 class="text-center box-title">Game Window</h3>
+            <div id="game-window"><div id="game-output"></div></div>
+            <div id="button-window">
+              <button id="create-btn" class="btn-success pointer">
+                Create New Game
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-
+    <!-- Game Container -->
     <div id="game-container" class="hidden">
-        <div class="row">
-            <div class="col-8">
-                <div id="game-table-box">
-                    <h3 class="text-center box-title">Arvids Table</h3>
-                    <div id="game-table-window">
-                        <div id="game-table-output"></div>
-                    </div>
-                </div>
-                <div id="game-chat-box">
-                    <h3 class="text-center box-title">Game Chat</h3>
-                    <div id="game-chat-window">
-                        <div id="game-chat-output"></div>
-                        <div id="game-typing-detector"></div>
-                    </div>
-                    <div id="game-message-window">
-                        <input id="game-message-input" type="text" placeholder="Message" />
-                        <button id="game-send-btn" class="pointer">Send</button>
-                    </div>
-                </div>
+      <div class="row">
+        <div class="col-8">
+          <div id="game-table-box">
+            <h3 class="text-center box-title">Arvids Table</h3>
+            <div id="game-table-window"><div id="game-table-output"></div></div>
+          </div>
+          <div id="game-chat-box">
+            <h3 class="text-center box-title">Game Chat</h3>
+            <div id="game-chat-window">
+              <div id="game-chat-output"></div>
+              <div id="game-typing-detector"></div>
             </div>
-            <div class="col-4">
-                <div id="point-box">
-                    <h3 class="text-center box-title">Score Board</h3>
-                    <div id="point-window">
-                        <div class="row">
-                            <div class="col-3 text-center off-white">Arv</div>
-                            <div class="col-3 text-center">Amy</div>
-                            <div class="col-3 text-center off-white">Joe</div>
-                            <div class="col-3 text-center">Nick</div>
-                        </div>
-                    </div>
-                </div>
+            <div id="game-message-window">
+              <input
+                id="game-message-input"
+                type="text"
+                placeholder="Message"
+              />
+              <button id="game-send-btn" class="pointer">Send</button>
             </div>
+          </div>
         </div>
+        <div class="col-4">
+          <div id="point-box">
+            <h3 class="text-center box-title">Score Board</h3>
+            <div id="point-window">
+              <div class="row">
+                <div class="col-3 text-center off-white">Arv</div>
+                <div class="col-3 text-center">Amy</div>
+                <div class="col-3 text-center off-white">Joe</div>
+                <div class="col-3 text-center">Nick</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <script src='javascript/lobby.js'></script>
-</body>
-
+  </body>
 </html>

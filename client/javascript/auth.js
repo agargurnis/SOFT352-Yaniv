@@ -1,7 +1,9 @@
-import axios from 'axios';
-
 // Register 
-export const registerUser = (userData) => {
+registerUser = () => {
+    var userData = {
+        "nickname": $('#nickname-register-input')[0].value,
+        "password": $('#password-register-input')[0].value
+    }
     axios
         .post('/api/auth/register', userData)
         .then(response => {
@@ -13,7 +15,11 @@ export const registerUser = (userData) => {
         );
 };
 // Login
-export const loginUser = userData => {
+loginUser = () => {
+    var userData = {
+        "nickname": $('#nickname-input')[0].value,
+        "password": $('#password-input')[0].value
+    }
     axios
         .post('/api/auth/login', userData)
         .then(response => {
