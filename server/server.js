@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const socket = require('socket.io');
 const auth = require('./api/auth');
 const bodyParser = require('body-parser');
-
+const path = require('path');
 const db = 'mongodb://admin:password007@ds053948.mlab.com:53948/soft352_yaniv';
 
 // Connect to mongoDB
@@ -17,30 +17,36 @@ mongoose
     .catch(err => {
         console.log(err);
     });
-
 // app setup
 const app = express();
 const server = app.listen(4000, function () {
     console.log("---> server listening to port 4000");
 })
-
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     next();
 });
-
 // Body parser middleware
 app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(bodyParser.json());
-
 // use routes
 app.use('/api/auth', auth);
-
-// static files
+// use static files
 app.use(express.static('../client'));
-
+// main path
+app.get('/', function (req, res) {
+    res.sendFile(path.resolve('../client/index.html'));
+});
+// path to lobby html
+app.get('/lobby', function (req, res) {
+    res.sendFile(path.resolve('../client/lobby.html'));
+});
+// path to game html
+app.get('/game', function (req, res) {
+    res.sendFile(path.resolve('../client/game.html'));
+});
 // socket setup
 const io = socket(server);
 

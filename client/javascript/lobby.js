@@ -5,21 +5,9 @@ class Game {
     }
 }
 
-class Player {
-    constructor(username) {
-        this.username = username;
-        this.cardsOnHand = new Array(5);
-        this.points = 0;
-    }
-}
-
 $(document).ready(function () {
-    // instantiate player obejct
-    const player = new Player('temp');
-
     // make connection
     var socket = io.connect('http://localhost:4000');
-
     // query dom containers
     var lobbyContainer = $('#lobby-container')[0];
     var gameContainer = $('#game-container')[0];
@@ -27,28 +15,31 @@ $(document).ready(function () {
     var sendBtn = $('#send-btn')[0];
     var createBtn = $('#create-btn')[0];
     // query form input fields
-    var usernameField = $('#username-input')[0];
     var messageField = $('#message-input')[0];
     // query form output fields
     var chatOutput = $('#chat-output')[0];
     var typingDetector = $('#typing-detector')[0];
+    // retrieve player object from local storage
+    var urlString = window.location.href;
+    var url = new URL(urlString);
+    var playerKey = url.searchParams.get("name");
+    var player = JSON.parse(localStorage.getItem(playerKey));
 
     // lobby container listeners
     createBtn.addEventListener('click', function () {
         gameContainer.classList.remove('hidden');
         lobbyContainer.classList.add('hidden');
-        // player.username = usernameField.value;
     })
 
     sendBtn.addEventListener('click', function () {
         socket.emit('lobby-chat', {
             message: messageField.value,
-            handle: player.username
+            handle: player["username"]
         });
     })
 
     messageField.addEventListener('keypress', function () {
-        socket.emit('typing', usernameField.value);
+        socket.emit('typing', player["username"]);
     })
 
     socket.on('lobby-chat', function (data) {
