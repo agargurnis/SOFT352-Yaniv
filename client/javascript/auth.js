@@ -1,7 +1,7 @@
 // Register 
 registerUser = () => {
     var userData = {
-        "nickname": $('#nickname-register-input')[0].value,
+        "username": $('#username-register-input')[0].value,
         "password": $('#password-register-input')[0].value
     }
     axios
@@ -17,7 +17,7 @@ registerUser = () => {
 // Login
 loginUser = () => {
     var userData = {
-        "nickname": $('#nickname-input')[0].value,
+        "username": $('#username-input')[0].value,
         "password": $('#password-input')[0].value
     }
     axios

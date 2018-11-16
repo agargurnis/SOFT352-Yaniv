@@ -6,8 +6,8 @@ class Game {
 }
 
 class Player {
-    constructor(nickname) {
-        this.nickname = nickname;
+    constructor(username) {
+        this.username = username;
         this.cardsOnHand = new Array(5);
         this.points = 0;
     }
@@ -21,82 +21,43 @@ $(document).ready(function () {
     var socket = io.connect('http://localhost:4000');
 
     // query dom containers
-    var welcomeContainer = $('#welcome-container')[0];
     var lobbyContainer = $('#lobby-container')[0];
     var gameContainer = $('#game-container')[0];
-    var loginForm = $('#login-form')[0];
-    var registerForm = $('#register-form')[0];
     // query dom buttons
-    var registerFormBtn = $('#register-form-btn')[0];
-    var registerUserBtn = $('#register-btn')[0];
     var sendBtn = $('#send-btn')[0];
-    var gameSendBtn = $('#game-send-btn')[0];
     var createBtn = $('#create-btn')[0];
     // query form input fields
-    var nicknameField = $('#nickname-input')[0];
+    var usernameField = $('#username-input')[0];
     var messageField = $('#message-input')[0];
-    var gameMessageField = $('#game-message-input')[0];
     // query form output fields
     var chatOutput = $('#chat-output')[0];
     var typingDetector = $('#typing-detector')[0];
-    var gameChatOutput = $('#game-chat-output')[0];
-    var gameTypingDetector = $('#game-typing-detector')[0];
 
-    // add event listeners
-    registerFormBtn.addEventListener('click', function () {
-        registerForm.classList.remove('hidden');
-        loginForm.classList.add('hidden');
-    })
-
-    registerUserBtn.addEventListener('click', function () {
-        registerForm.classList.add('hidden');
-        loginForm.classList.remove('hidden');
-    })
-
+    // lobby container listeners
     createBtn.addEventListener('click', function () {
         gameContainer.classList.remove('hidden');
         lobbyContainer.classList.add('hidden');
-        // player.nickname = nicknameField.value;
+        // player.username = usernameField.value;
     })
 
     sendBtn.addEventListener('click', function () {
         socket.emit('lobby-chat', {
             message: messageField.value,
-            handle: player.nickname
-        });
-    })
-
-    gameSendBtn.addEventListener('click', function () {
-        socket.emit('game-chat', {
-            message: gameMessageField.value,
-            handle: player.nickname
+            handle: player.username
         });
     })
 
     messageField.addEventListener('keypress', function () {
-        socket.emit('typing', nicknameField.value);
+        socket.emit('typing', usernameField.value);
     })
 
-    gameMessageField.addEventListener('keypress', function () {
-        socket.emit('player-typing', nicknameField.value);
-    })
-
-    // listen for events
     socket.on('lobby-chat', function (data) {
         typingDetector.innerHTML = '';
         chatOutput.innerHTML += '<p><strong>' + data.handle + ': </strong>' + data.message + '</p>';
-    })
-
-    socket.on('game-chat', function (data) {
-        gameTypingDetector.innerHTML = '';
-        gameChatOutput.innerHTML += '<p><strong>' + data.handle + ': </strong>' + data.message + '</p>';
     })
 
     socket.on('typing', function (data) {
         typingDetector.innerHTML = '<p><em>' + data + ' is typing...</em></p>';
     })
 
-    socket.on('player-typing', function (data) {
-        gameTypingDetector.innerHTML = '<p><em>' + data + ' is typing...</em></p>';
-    })
 });

@@ -8,7 +8,7 @@ const User = require('../models/User');
 router.post('/register', (req, res) => {
 
     User.findOne({
-        nickname: req.body.nickname
+        username: req.body.username
     }).then(user => {
         if (user) {
             return res.status(400).json({
@@ -16,7 +16,7 @@ router.post('/register', (req, res) => {
             });
         } else {
             const newUser = new User({
-                nickname: req.body.nickname,
+                username: req.body.username,
                 password: req.body.password
             });
 
@@ -29,12 +29,12 @@ router.post('/register', (req, res) => {
 
 // GET api/auth/login
 router.post('/login', (req, res) => {
-    const nickname = req.body.nickname;
+    const username = req.body.username;
     const password = req.body.password;
 
-    // Find user by nickname
+    // Find user by username
     User.findOne({
-        nickname: nickname
+        username: username
     }).then(user => {
         // Check for user
         if (!user) {

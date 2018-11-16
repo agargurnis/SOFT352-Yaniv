@@ -10,11 +10,13 @@
       integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
       crossorigin="anonymous"
     />
-    <script src="/socket.io/socket.io.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="assets/files/jquery-3.2.1.js"></script>
-    <script src="javascript/lobby.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script src="javascript/auth.js"></script>
+    <script src="javascript/welcome.js"></script>
+    <script src="javascript/lobby.js"></script>
+    <script src="javascript/game.js"></script>
   </head>
 
   <body>
@@ -25,10 +27,10 @@
         <h1>Welcome to the card game Yaniv</h1>
         <h3 class=" pt-2">Please sign into account to continue</h3>
         <input
-          id="nickname-input"
+          id="username-input"
           class="mt-3"
           type="text"
-          placeholder="Nickname"
+          placeholder="Username"
         />
         <input
           id="password-input"
@@ -43,7 +45,7 @@
         >
           Login
         </button>
-        <h6 class="pointer pt-2">
+        <h6 class="off-white pt-2">
           No account yet? Click to register
           <button id="register-form-btn" class="pointer text-button">
             here
@@ -55,10 +57,10 @@
         <h1>Welcome to the card game Yaniv</h1>
         <h3 class=" pt-2">Please enter your details below to register</h3>
         <input
-          id="nickname-register-input"
+          id="username-register-input"
           class="mt-3"
           type="text"
-          placeholder="Nickname"
+          placeholder="Username"
         />
         <input
           id="password-register-input"

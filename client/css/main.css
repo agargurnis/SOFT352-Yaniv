@@ -33,6 +33,10 @@ body {
   color: white;
 }
 
+.off-white {
+  color: #aaa;
+}
+
 .text-button {
   border: none;
   background-color: inherit;
