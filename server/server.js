@@ -1,17 +1,43 @@
-var express = require('express');
-var socket = require('socket.io');
+const express = require('express');
+const mongoose = require('mongoose');
+const socket = require('socket.io');
+const auth = require('./api/auth');
+const bodyParser = require('body-parser');
+
+const db = 'mongodb://admin:password007@ds053948.mlab.com:53948/soft352_yaniv';
+
+// Connect to mongoDB
+mongoose
+    .connect(db, {
+        useNewUrlParser: true
+    })
+    .then(() => {
+        console.log('---> MongoDB Connected');
+    })
+    .catch(err => {
+        console.log(err);
+    });
 
 // app setup
-var app = express();
-var server = app.listen(4000, function () {
-    console.log("server listening to port 4000");
+const app = express();
+const server = app.listen(4000, function () {
+    console.log("---> server listening to port 4000");
 })
+
+// Body parser middleware
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
+app.use(bodyParser.json());
+
+// use routes
+app.use('/api/auth', auth);
 
 // static files
 app.use(express.static('../client'));
 
 // socket setup
-var io = socket(server);
+const io = socket(server);
 
 io.on('connection', function (socket) {
     //console.log('made socket connection ' + socket.id);
