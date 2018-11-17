@@ -68,7 +68,7 @@ io.on('connection', function (socket) {
         socket.broadcast.emit('player-typing', data);
     })
     // available game list 
-    socket.on('game-created', function (data) {
-        socket.broadcast.emit('game-created', data);
-    })
+    // socket.on('game-created', function (data) {
+    //     socket.broadcast.emit('game-created', data);
+    // })
 })

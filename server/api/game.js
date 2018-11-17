@@ -16,7 +16,7 @@ router.post('/create', (req, res) => {
             });
         } else {
             const newTable = new Table({
-                name: req.body.ename,
+                name: req.body.name,
                 nrOfPlayers: req.body.nrOfPlayers
             });
 
@@ -29,30 +29,45 @@ router.post('/create', (req, res) => {
 
 // GET api/game/join
 router.post('/join', (req, res) => {
-    const name = req.body.name;
-    // const nrOfPlayers = req.body.nrOfPlayers;
-
     // Find table by name
-    Table.findOne({
-        name: name
-    }).then(table => {
-        // Check for table
-        if (!table) {
-            return res.status(404).json({
-                success: false
-            });
-        }
-        // Check if the table is full
-        if (table.nrOfPlayers < 4) {
-            return res.status(200).json({
-                success: true
-            });
-        } else {
-            return res.status(404).json({
-                success: false
-            });
-        }
-    });
+    Table.findById(req.body.tableId)
+        .then(table => {
+            // Check for table
+            if (!table) {
+                return res.status(404).json({
+                    success: false
+                });
+            }
+            // get current number of players 
+            currentNr = table.nrOfPlayers;
+            // Check if the table is full
+            if (currentNr < 4) {
+                // update table
+                table.nrOfPlayers = currentNr + 1;
+                // save to db
+                table.save().then(updatedTable => res.json(updatedTable));
+            } else {
+                return res.status(404).json({
+                    success: false
+                });
+            }
+        });
+});
+
+// GET api/game
+router.get('/', (req, res) => {
+    Table.find()
+        .then(games => {
+            if (!games) {
+                return res.status(404).json({
+                    success: false
+                });
+            }
+            res.json(games);
+        })
+        .catch(error => res.status(404).json({
+            games: 'No games found'
+        }));
 });
 
 module.exports = router;

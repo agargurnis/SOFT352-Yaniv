@@ -27,20 +27,73 @@ $(document).ready(function () {
 
     function createGame() {
         localStorage.setItem(player.username + '-table', JSON.stringify(table));
-        window.location.href = "http://localhost:4000/game?table=" + player["username"] + "-table&name=" + player["username"];
+        var tableData = {
+            "name": player["username"] + "-table",
+            "nrOfPlayers": 1
+        }
+        axios
+            .post('/api/game/create', tableData)
+            .then(response => {
+                window.location.href = "http://localhost:4000/game?table=" + player["username"] + "-table&name=" + player["username"];
+            })
+            .catch(error =>
+                console.log(error)
+            );
     }
 
+    function joinGame(tableId, tableName) {
+        var tableData = {
+            "tableId": tableId
+        }
+        axios
+            .post('/api/game/join', tableData)
+            .then(response => {
+                window.location.href = "http://localhost:4000/game?table=" + tableName + "&name=" + player["username"];
+            })
+            .catch(error =>
+                console.log(error)
+            );
+    };
+
+    function setGameButtons() {
+        $('.game-button').each(function () {
+            var tableName = $(this)[0].firstChild.textContent;
+            var tableId = $(this)[0].id;
+
+            $(this)[0].addEventListener('click', function () {
+                joinGame(tableId, tableName);
+            })
+        })
+    }
+
+    function getGames() {
+        axios
+            .get('/api/game')
+            .then(response => {
+                response.data.map(table => {
+                    gameOutput.innerHTML += '<p id="' + table._id + '" class="game-button pointer"><strong class="game-table-name">' + table.name + '</strong><br/>Players: ' + table.nrOfPlayers + '/4</p>';
+                });
+                setGameButtons();
+            })
+            .catch(error =>
+                console.log(error)
+            );
+    };
+
+    // load game tables 
+    window.onload = getGames();
+
     createBtn.addEventListener('click', function () {
-        socket.emit('game-created', {
-            tableName: player["username"] + " table",
-            nrOfPlayers: '1'
-        });
+        // socket.emit('game-created', {
+        //     tableName: player["username"] + " table",
+        //     nrOfPlayers: '1'
+        // });
         createGame();
     })
 
-    socket.on('game-created', function (data) {
-        gameOutput.innerHTML += '<p class="game-button pointer"><strong>' + data.tableName + '</strong><br/>Players: ' + data.nrOfPlayers + '/4</p>';
-    })
+    // socket.on('game-created', function (data) {
+    //     gameOutput.innerHTML += '<p class="game-button pointer"><strong class="game-table-name">' + data.tableName + '</strong><br/>Players: ' + data.nrOfPlayers + '/4</p>';
+    // })
 
     sendBtn.addEventListener('click', function () {
         socket.emit('lobby-chat', {
