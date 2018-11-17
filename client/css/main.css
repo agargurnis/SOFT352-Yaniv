@@ -29,12 +29,22 @@ body {
 }
 
 .box-title {
-  margin-top: 10px;
+  margin-top: 5px;
+  margin-bottom: 0;
+  font-size: 18px;
   color: white;
 }
 
 .off-white {
   color: #aaa;
+}
+
+.pale-gray {
+  background-color: #e9e9e9;
+}
+
+.score-board-name {
+  max-width: 24% !important;
 }
 
 .text-button {
@@ -50,11 +60,16 @@ body {
 .game-button {
   padding: 10px 15px;
   background-color: crimson;
-  border-bottom: 2px solid #000;
+  border-bottom: 1px solid #000;
+  border-top: 1px solid #000;
 }
 
 .game-button:hover {
   background-color: rgb(199, 0, 40);
+}
+
+.game-button p {
+  margin-bottom: 5px;
 }
 
 #chat-box {
@@ -64,7 +79,7 @@ body {
 }
 
 #game-chat-box {
-  margin: 15px 0 15px 15px;
+  margin: 5px 0 15px 15px;
   padding-top: 1px;
   background-color: rgba(0, 0, 0, 0.8);
 }
@@ -96,19 +111,19 @@ body {
 
 #game-chat-window {
   background-color: white;
-  height: 13.5vh;
+  height: 11.5vh;
   margin: 15px 25px 15px 25px;
 }
 
 #game-table-window {
-  background-color: white;
+  background-color: #e9e9e9;
   height: 68.8vh;
   margin: 15px 25px 15px 25px;
 }
 
 #point-window {
   background-color: white;
-  height: 92.5vh;
+  height: 90.8vh;
   margin: 15px 25px 15px 25px;
 }
 
@@ -151,4 +166,183 @@ body {
 #chat-output strong,
 #game-chat-output strong {
   color: #f74646;
+}
+
+#game-table-area {
+  width: 100%;
+  height: 78%;
+}
+
+#the-round-table {
+  width: 100%;
+  height: 100%;
+  padding-top: 5%;
+}
+
+#player-one {
+  position: relative;
+  left: 163px;
+  top: 353px;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background-color: #fff;
+  border: 3px solid #000;
+}
+
+#player-two {
+  position: relative;
+  right: 28px;
+  top: 88px;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background-color: #fff;
+  border: 3px solid #000;
+}
+
+#player-three {
+  position: relative;
+  left: 163px;
+  bottom: 175px;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background-color: #fff;
+  border: 3px solid #000;
+}
+
+#player-four {
+  position: relative;
+  left: 355px;
+  bottom: 62px;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background-color: #fff;
+  border: 3px solid #000;
+}
+
+#deck-back {
+  position: relative;
+  left: 210px;
+  bottom: 249px;
+  width: 75px;
+  height: 100px;
+  background-image: url("../assets/cards/deck1.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#deck-back:hover {
+  transform: scale(1.1);
+}
+
+#deck-front {
+  position: relative;
+  left: 116px;
+  bottom: 150px;
+  width: 75px;
+  height: 100px;
+  background-image: url("../assets/cards/king_clubs.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#deck-front:hover {
+  transform: scale(1.1);
+}
+
+#game-table-square {
+  width: 400px;
+  height: 400px;
+  margin: 0 auto;
+  background-image: url("../assets/images/table1.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#player-cards {
+  width: 500px;
+  height: 21%;
+  margin: 0 auto;
+  /* background-color: bisque; */
+}
+
+#card-one {
+  float: left;
+  margin: 0 5px;
+  height: 100%;
+  width: 90px;
+  background-image: url("../assets/cards/10_spades.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#card-one:hover {
+  transform: scale(1.1);
+}
+
+#card-two {
+  float: left;
+  margin: 0 5px;
+  height: 100%;
+  width: 90px;
+  background-image: url("../assets/cards/jack_spades.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#card-two:hover {
+  transform: scale(1.1);
+}
+
+#card-three {
+  float: left;
+  margin: 0 5px;
+  height: 100%;
+  width: 90px;
+  background-image: url("../assets/cards/queen_spades.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#card-three:hover {
+  transform: scale(1.1);
+}
+
+#card-four {
+  float: left;
+  margin: 0 5px;
+  height: 100%;
+  width: 90px;
+  background-image: url("../assets/cards/king_spades.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#card-four:hover {
+  transform: scale(1.1);
+}
+
+#card-five {
+  float: left;
+  margin: 0 5px;
+  height: 100%;
+  width: 90px;
+  background-image: url("../assets/cards/ace_spades.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#card-five:hover {
+  transform: scale(1.1);
 }
