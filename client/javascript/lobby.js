@@ -4,13 +4,12 @@ class Game {
         this.players = new Array(4);
     }
 }
+// instantiate a game object
+const table = new Game();
 
 $(document).ready(function () {
     // make connection
     var socket = io.connect('http://localhost:4000');
-    // query dom containers
-    var lobbyContainer = $('#lobby-container')[0];
-    var gameContainer = $('#game-container')[0];
     // query dom buttons
     var sendBtn = $('#send-btn')[0];
     var createBtn = $('#create-btn')[0];
@@ -25,10 +24,13 @@ $(document).ready(function () {
     var playerKey = url.searchParams.get("name");
     var player = JSON.parse(localStorage.getItem(playerKey));
 
-    // lobby container listeners
+    function createGame() {
+        localStorage.setItem(player.username + '-table', JSON.stringify(table));
+        window.location.href = "http://localhost:4000/game?table=" + player["username"] + "-table&name=" + player["username"];
+    }
+
     createBtn.addEventListener('click', function () {
-        gameContainer.classList.remove('hidden');
-        lobbyContainer.classList.add('hidden');
+        createGame();
     })
 
     sendBtn.addEventListener('click', function () {

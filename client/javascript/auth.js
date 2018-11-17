@@ -5,7 +5,7 @@ class Player {
         this.points = 0;
     }
 }
-// instantiate player object
+// instantiate a temporary player object
 const player = new Player('temp');
 
 $(document).ready(function () {

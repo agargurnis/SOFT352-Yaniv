@@ -1,10 +1,6 @@
 $(document).ready(function () {
     // make connection
     var socket = io.connect('http://localhost:4000');
-
-    // query dom containers
-    var lobbyContainer = $('#lobby-container')[0];
-    var gameContainer = $('#game-container')[0];
     // query dom buttons
     var gameSendBtn = $('#game-send-btn')[0];
     // query form input fields
