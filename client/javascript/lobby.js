@@ -34,6 +34,7 @@ $(document).ready(function () {
         axios
             .post('/api/game/create', tableData)
             .then(response => {
+                socket.emit('game-created', "A new game has been created");
                 window.location.href = "http://localhost:4000/game?table=" + player["username"] + "-table&name=" + player["username"];
             })
             .catch(error =>
@@ -48,6 +49,7 @@ $(document).ready(function () {
         axios
             .post('/api/game/join', tableData)
             .then(response => {
+                socket.emit('game-joined', "A game has been joined");
                 window.location.href = "http://localhost:4000/game?table=" + tableName + "&name=" + player["username"];
             })
             .catch(error =>
@@ -70,6 +72,7 @@ $(document).ready(function () {
         axios
             .get('/api/game')
             .then(response => {
+                gameOutput.innerHTML = '';
                 response.data.map(table => {
                     gameOutput.innerHTML += '<p id="' + table._id + '" class="game-button pointer"><strong class="game-table-name">' + table.name + '</strong><br/>Players: ' + table.nrOfPlayers + '/4</p>';
                 });
@@ -84,16 +87,18 @@ $(document).ready(function () {
     window.onload = getGames();
 
     createBtn.addEventListener('click', function () {
-        // socket.emit('game-created', {
-        //     tableName: player["username"] + " table",
-        //     nrOfPlayers: '1'
-        // });
         createGame();
     })
 
-    // socket.on('game-created', function (data) {
-    //     gameOutput.innerHTML += '<p class="game-button pointer"><strong class="game-table-name">' + data.tableName + '</strong><br/>Players: ' + data.nrOfPlayers + '/4</p>';
-    // })
+    socket.on('game-created', function (data) {
+        chatOutput.innerHTML += '<p>' + data + '</p>';
+        getGames();
+    })
+
+    socket.on('game-joined', function (data) {
+        chatOutput.innerHTML += '<p>' + data + '</p>';
+        getGames();
+    })
 
     sendBtn.addEventListener('click', function () {
         socket.emit('lobby-chat', {
