@@ -47,6 +47,16 @@ body {
   color: red;
 }
 
+.game-button {
+  padding: 10px 15px;
+  background-color: crimson;
+  border-bottom: 2px solid #000;
+}
+
+.game-button:hover {
+  background-color: rgb(199, 0, 40);
+}
+
 #chat-box {
   margin: 15px 0 15px 15px;
   padding-top: 1px;

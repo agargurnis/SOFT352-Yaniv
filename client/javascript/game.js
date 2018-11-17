@@ -8,17 +8,24 @@ $(document).ready(function () {
     // query form output fields
     var gameChatOutput = $('#game-chat-output')[0];
     var gameTypingDetector = $('#game-typing-detector')[0];
+    // retrieve player object from local storage
+    var urlString = window.location.href;
+    var url = new URL(urlString);
+    var playerKey = url.searchParams.get("name");
+    var gameKey = url.searchParams.get("table");
+    var player = JSON.parse(localStorage.getItem(playerKey));
+    var game = JSON.parse(localStorage.getItem(gameKey));
 
     // game container listeners
     gameSendBtn.addEventListener('click', function () {
         socket.emit('game-chat', {
             message: gameMessageField.value,
-            handle: player.username
+            handle: player["username"]
         });
     })
 
     gameMessageField.addEventListener('keypress', function () {
-        socket.emit('player-typing', usernameField.value);
+        socket.emit('player-typing', player["username"]);
     })
 
     socket.on('game-chat', function (data) {

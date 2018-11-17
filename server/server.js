@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const socket = require('socket.io');
 const auth = require('./api/auth');
+const game = require('./api/game');
 const bodyParser = require('body-parser');
 const path = require('path');
 const db = 'mongodb://admin:password007@ds053948.mlab.com:53948/soft352_yaniv';
@@ -33,6 +34,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 // use routes
 app.use('/api/auth', auth);
+app.use('/api/game', game);
 // use static files
 app.use(express.static('../client'));
 // main path
@@ -51,20 +53,22 @@ app.get('/game', function (req, res) {
 const io = socket(server);
 
 io.on('connection', function (socket) {
-    //console.log('made socket connection ' + socket.id);
+    // lobby chat 
     socket.on('lobby-chat', function (data) {
         io.sockets.emit('lobby-chat', data);
     })
-
-    socket.on('game-chat', function (data) {
-        io.sockets.emit('game-chat', data);
-    })
-
     socket.on('typing', function (data) {
         socket.broadcast.emit('typing', data);
     })
-
+    // game chat
+    socket.on('game-chat', function (data) {
+        io.sockets.emit('game-chat', data);
+    })
     socket.on('player-typing', function (data) {
         socket.broadcast.emit('player-typing', data);
+    })
+    // available game list 
+    socket.on('game-created', function (data) {
+        socket.broadcast.emit('game-created', data);
     })
 })

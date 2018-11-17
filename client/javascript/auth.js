@@ -9,8 +9,23 @@ class Player {
 const player = new Player('temp');
 
 $(document).ready(function () {
-    // query the dom
+    // query dom containers
+    var loginForm = $('#login-form')[0];
+    var registerForm = $('#register-form')[0];
+    // query dom buttons
+    var registerFormBtn = $('#register-form-btn')[0];
+    var registerUserBtn = $('#register-btn')[0];
+    // query the dom for the username
     var username = $('#username-input')[0];
+    // welcome container listeners
+    registerFormBtn.addEventListener('click', function () {
+        registerForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+    })
+    registerUserBtn.addEventListener('click', function () {
+        registerForm.classList.add('hidden');
+        loginForm.classList.remove('hidden');
+    })
     // successful login function
     function login() {
         player.username = username.value.toLowerCase();

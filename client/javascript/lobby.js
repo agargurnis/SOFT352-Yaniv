@@ -17,6 +17,7 @@ $(document).ready(function () {
     var messageField = $('#message-input')[0];
     // query form output fields
     var chatOutput = $('#chat-output')[0];
+    var gameOutput = $('#game-output')[0];
     var typingDetector = $('#typing-detector')[0];
     // retrieve player object from local storage
     var urlString = window.location.href;
@@ -30,7 +31,15 @@ $(document).ready(function () {
     }
 
     createBtn.addEventListener('click', function () {
+        socket.emit('game-created', {
+            tableName: player["username"] + " table",
+            nrOfPlayers: '1'
+        });
         createGame();
+    })
+
+    socket.on('game-created', function (data) {
+        gameOutput.innerHTML += '<p class="game-button pointer"><strong>' + data.tableName + '</strong><br/>Players: ' + data.nrOfPlayers + '/4</p>';
     })
 
     sendBtn.addEventListener('click', function () {
