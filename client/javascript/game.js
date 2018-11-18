@@ -24,6 +24,8 @@ $(document).ready(function () {
     var cardThree = $('#card-three')[0];
     var cardFour = $('#card-four')[0];
     var cardFive = $('#card-five')[0];
+    var deckFront = $('#deck-front')[0];
+    var deckBack = $('#deck-back')[0];
     // retrieve player object from local storage
     var urlString = window.location.href;
     var url = new URL(urlString);
@@ -49,6 +51,7 @@ $(document).ready(function () {
             handle: player["username"]
         });
     })
+
     // card listeners
     $('.game-card').each(function () {
         var thisCard = $(this)[0];
@@ -147,21 +150,34 @@ $(document).ready(function () {
             array[j] = temp;
         }
     }
+    // shuffled deck of cards
+    deckBack.addEventListener('click', function () {
+
+        shuffleCards(thisTable['cards']);
+        socket.emit('shuffled-deck', {
+            deck: thisTable['cards']
+        });
+    })
     // hand out cards 
     function dealCards() {
 
     }
     // do the initial setup for the game
     function setupTable() {
-        shuffleCards(thisTable['cards']);
+        // shuffleCards(thisTable['cards']);
         sortPlayers(thisTable['players']);
-
+        // console.log(thisTable['cards']);
     }
 
     window.onload = setupTable();
 
     gameMessageField.addEventListener('keypress', function () {
         socket.emit('player-typing', player["username"]);
+    })
+
+    socket.on('shuffled-deck', function (data) {
+        thisTable['cards'] = data.deck;
+        console.log(thisTable['cards']);
     })
 
     socket.on('game-chat', function (data) {
