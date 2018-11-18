@@ -1,7 +1,7 @@
 class Player {
     constructor(username) {
         this.username = username;
-        this.cardsOnHand = new Array(5);
+        this.cardsOnHand = new Array();
         this.points = 0;
     }
 }
