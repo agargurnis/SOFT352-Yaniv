@@ -64,42 +64,101 @@ $(document).ready(function () {
     })
     // display players in their seats 
     function seatPlayers(playerArray) {
-        playerOne.innerHTML = '<p>' + playerArray[0].points + '<br />points</p>'
-        playerOneColumn.innerHTML = '<p><strong>' + playerArray[0].username + '</strong></p>'
-        playerTwo.innerHTML = '<p>' + playerArray[1].username + '<br />' + playerArray[1].cardsOnHand.length + '</p>'
-        playerTwoColumn.innerHTML = '<p><strong>' + playerArray[1].username + '</strong></p>'
-        playerThree.innerHTML = '<p>' + playerArray[2].username + '<br />' + playerArray[2].cardsOnHand.length + '</p>'
-        playerThreeColumn.innerHTML = '<p><strong>' + playerArray[2].username + '</strong></p>'
-        playerFour.innerHTML = '<p>' + playerArray[3].username + '<br />' + playerArray[3].cardsOnHand.length + '</p>'
-        playerFourColumn.innerHTML = '<p><strong>' + playerArray[3].username + '</strong></p>'
+        console.log(playerArray);
+
+        if (playerArray.length == 1) {
+            playerOne.innerHTML = '<p>' + playerArray[0].pointsOnHand + '<br />points</p>'
+            playerOneColumn.innerHTML = '<p><strong>' + playerArray[0].username + '</strong></p>'
+        } else if (playerArray.length == 2) {
+            playerOne.innerHTML = '<p>' + playerArray[0].pointsOnHand + '<br />points</p>'
+            playerOneColumn.innerHTML = '<p><strong>' + playerArray[0].username + '</strong></p>'
+            playerTwo.innerHTML = '<p>' + playerArray[1].username + '<br />' + playerArray[1].cardsOnHand.length + ' cards</p>'
+            playerTwoColumn.innerHTML = '<p><strong>' + playerArray[1].username + '</strong></p>'
+        } else if (playerArray.length == 3) {
+            playerOne.innerHTML = '<p>' + playerArray[0].pointsOnHand + '<br />points</p>'
+            playerOneColumn.innerHTML = '<p><strong>' + playerArray[0].username + '</strong></p>'
+            playerTwo.innerHTML = '<p>' + playerArray[1].username + '<br />' + playerArray[1].cardsOnHand.length + ' cards</p>'
+            playerTwoColumn.innerHTML = '<p><strong>' + playerArray[1].username + '</strong></p>'
+            playerThree.innerHTML = '<p>' + playerArray[2].username + '<br />' + playerArray[2].cardsOnHand.length + ' cards</p>'
+            playerThreeColumn.innerHTML = '<p><strong>' + playerArray[2].username + '</strong></p>'
+        } else if (playerArray.length == 4) {
+            playerOne.innerHTML = '<p>' + playerArray[0].pointsOnHand + '<br />points</p>'
+            playerOneColumn.innerHTML = '<p><strong>' + playerArray[0].username + '</strong></p>'
+            playerTwo.innerHTML = '<p>' + playerArray[1].username + '<br />' + playerArray[1].cardsOnHand.length + ' cards</p>'
+            playerTwoColumn.innerHTML = '<p><strong>' + playerArray[1].username + '</strong></p>'
+            playerThree.innerHTML = '<p>' + playerArray[2].username + '<br />' + playerArray[2].cardsOnHand.length + ' cards</p>'
+            playerThreeColumn.innerHTML = '<p><strong>' + playerArray[2].username + '</strong></p>'
+            playerFour.innerHTML = '<p>' + playerArray[3].username + '<br />' + playerArray[3].cardsOnHand.length + ' cards</p>'
+            playerFourColumn.innerHTML = '<p><strong>' + playerArray[3].username + '</strong></p>'
+        }
+
     }
     // sort players array
-    function sortPlayers() {
-        var unsortedArray = thisTable['players'];
+    function sortPlayers(unsortedArray) {
         var playerIndex = findIndexByKeyValue(unsortedArray, 'username', player['username']);
         var sortedArray = new Array();
         sortedArray.push(player);
-        if (playerIndex == 1) {
-            sortedArray.push(unsortedArray[2]);
-            sortedArray.push(unsortedArray[3]);
-            sortedArray.push(unsortedArray[0]);
-        } else if (playerIndex == 2) {
-            sortedArray.push(unsortedArray[3]);
-            sortedArray.push(unsortedArray[0]);
-            sortedArray.push(unsortedArray[1]);
-        } else if (playerIndex == 3) {
-            sortedArray.push(unsortedArray[0]);
-            sortedArray.push(unsortedArray[1]);
-            sortedArray.push(unsortedArray[2]);
-        } else {
-            sortedArray = unsortedArray;
+        if (unsortedArray.length == 1) {
+            sortedArray = unsortedArray
+        } else if (unsortedArray.length == 2) {
+            if (playerIndex == 1) {
+                sortedArray.push(unsortedArray[0]);
+            } else {
+                sortedArray = unsortedArray;
+            }
+        } else if (unsortedArray.length == 3) {
+            if (playerIndex == 1) {
+                sortedArray.push(unsortedArray[2]);
+                sortedArray.push(unsortedArray[0]);
+            } else if (playerIndex == 2) {
+                sortedArray.push(unsortedArray[0]);
+                sortedArray.push(unsortedArray[1]);
+            } else {
+                sortedArray = unsortedArray;
+            }
+        } else if (unsortedArray.length == 4) {
+            if (playerIndex == 1) {
+                sortedArray.push(unsortedArray[2]);
+                sortedArray.push(unsortedArray[3]);
+                sortedArray.push(unsortedArray[0]);
+            } else if (playerIndex == 2) {
+                sortedArray.push(unsortedArray[3]);
+                sortedArray.push(unsortedArray[0]);
+                sortedArray.push(unsortedArray[1]);
+            } else if (playerIndex == 3) {
+                sortedArray.push(unsortedArray[0]);
+                sortedArray.push(unsortedArray[1]);
+                sortedArray.push(unsortedArray[2]);
+            } else {
+                sortedArray = unsortedArray;
+            }
         }
+
         seatPlayers(sortedArray);
-        thisTable['players'] = sortedArray;
-        localStorage.setItem(tableKey, JSON.stringify(thisTable));
+        // thisTable['players'] = sortedArray;
+        // localStorage.setItem(tableKey, JSON.stringify(thisTable));
+    }
+    // shuffle deck of cards 
+    function shuffleCards(array) {
+        for (var i = array.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+    }
+    // hand out cards 
+    function dealCards() {
+
+    }
+    // do the initial setup for the game
+    function setupTable() {
+        shuffleCards(thisTable['cards']);
+        sortPlayers(thisTable['players']);
+
     }
 
-    window.onload = sortPlayers();;
+    window.onload = setupTable();
 
     gameMessageField.addEventListener('keypress', function () {
         socket.emit('player-typing', player["username"]);

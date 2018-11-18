@@ -2,7 +2,8 @@ class Player {
     constructor(username) {
         this.username = username;
         this.cardsOnHand = new Array();
-        this.points = 0;
+        this.pointsOnHand = 0;
+        this.gamePoints = 0;
     }
 }
 // instantiate a temporary player object
