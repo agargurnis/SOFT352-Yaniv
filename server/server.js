@@ -76,6 +76,6 @@ io.on('connection', function (socket) {
     })
     // game actions
     socket.on('shuffled-deck', function (data) {
-        socket.broadcast.emit('shuffled-deck', data);
+        io.sockets.emit('shuffled-deck', data);
     })
 })

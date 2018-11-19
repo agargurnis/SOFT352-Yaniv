@@ -227,7 +227,7 @@ body {
   bottom: 249px;
   width: 75px;
   height: 100px;
-  background-image: url("../assets/cards/deck1.png");
+  background-image: url("../assets/cards/deck.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -243,7 +243,7 @@ body {
   bottom: 150px;
   width: 75px;
   height: 100px;
-  background-image: url("../assets/cards/king_clubs.png");
+  background-image: url("../assets/cards/ace-S.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -257,7 +257,7 @@ body {
   width: 400px;
   height: 400px;
   margin: 0 auto;
-  background-image: url("../assets/images/table1.png");
+  background-image: url("../assets/images/table.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -275,7 +275,7 @@ body {
   margin: 0 5px;
   height: 100%;
   width: 90px;
-  background-image: url("../assets/cards/10_spades.png");
+  background-image: url("../assets/cards/deck.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -290,7 +290,7 @@ body {
   margin: 0 5px;
   height: 100%;
   width: 90px;
-  background-image: url("../assets/cards/jack_spades.png");
+  background-image: url("../assets/cards/deck.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -301,7 +301,7 @@ body {
   margin: 0 5px;
   height: 100%;
   width: 90px;
-  background-image: url("../assets/cards/queen_spades.png");
+  background-image: url("../assets/cards/deck.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -312,7 +312,7 @@ body {
   margin: 0 5px;
   height: 100%;
   width: 90px;
-  background-image: url("../assets/cards/king_spades.png");
+  background-image: url("../assets/cards/deck.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -323,7 +323,7 @@ body {
   margin: 0 5px;
   height: 100%;
   width: 90px;
-  background-image: url("../assets/cards/ace_spades.png");
+  background-image: url("../assets/cards/deck.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;

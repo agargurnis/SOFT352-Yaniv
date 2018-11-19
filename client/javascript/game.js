@@ -19,11 +19,11 @@ $(document).ready(function () {
     var playerThreeColumn = $('#player-three-column')[0];
     var playerFourColumn = $('#player-four-column')[0];
     // query dom cards
-    var cardOne = $('#card-one')[0];
-    var cardTwo = $('#card-two')[0];
-    var cardThree = $('#card-three')[0];
-    var cardFour = $('#card-four')[0];
-    var cardFive = $('#card-five')[0];
+    var cardOne = $('#card-one');
+    var cardTwo = $('#card-two');
+    var cardThree = $('#card-three');
+    var cardFour = $('#card-four');
+    var cardFive = $('#card-five');
     var deckFront = $('#deck-front')[0];
     var deckBack = $('#deck-back')[0];
     // retrieve player object from local storage
@@ -33,6 +33,11 @@ $(document).ready(function () {
     var tableKey = url.searchParams.get("table");
     var player = JSON.parse(localStorage.getItem(playerKey));
     var thisTable = JSON.parse(localStorage.getItem(tableKey));
+
+    // create array for players and their cards
+    var initialPlayerCards = new Array();
+    // store array of my current cards
+    var myCurrentCards = new Array();
 
     // function to find index by key value pairs
     function findIndexByKeyValue(array, key, value) {
@@ -48,7 +53,7 @@ $(document).ready(function () {
     gameSendBtn.addEventListener('click', function () {
         socket.emit('game-chat', {
             message: gameMessageField.value,
-            handle: player["username"]
+            handle: player['username']
         });
     })
 
@@ -138,8 +143,6 @@ $(document).ready(function () {
         }
 
         seatPlayers(sortedArray);
-        // thisTable['players'] = sortedArray;
-        // localStorage.setItem(tableKey, JSON.stringify(thisTable));
     }
     // shuffle deck of cards 
     function shuffleCards(array) {
@@ -152,21 +155,39 @@ $(document).ready(function () {
     }
     // shuffled deck of cards
     deckBack.addEventListener('click', function () {
-
         shuffleCards(thisTable['cards']);
+        dealCards(thisTable['players']);
         socket.emit('shuffled-deck', {
-            deck: thisTable['cards']
+            deck: thisTable['cards'],
+            cards: initialPlayerCards
         });
     })
     // hand out cards 
-    function dealCards() {
-
+    function dealCards(unsortedPlayerArray) {
+        for (var i = 0; i < unsortedPlayerArray.length; i++) {
+            for (var j = 0; j < 5; j++) {
+                var poppedCard = thisTable['cards'].pop();
+                unsortedPlayerArray[i].cardsOnHand.push(poppedCard);
+            }
+            initialPlayerCards.push({
+                "username": unsortedPlayerArray[i].username,
+                "cardsOnHand": unsortedPlayerArray[i].cardsOnHand
+            });
+        }
     }
+
+    // display players cards on hand
+    function displayCardsOnHand(cardArray) {
+        cardOne.css('background-image', 'url("../assets/cards/' + cardArray[0] + '.png")');
+        cardTwo.css('background-image', 'url("../assets/cards/' + cardArray[1] + '.png")');
+        cardThree.css('background-image', 'url("../assets/cards/' + cardArray[2] + '.png")');
+        cardFour.css('background-image', 'url("../assets/cards/' + cardArray[3] + '.png")');
+        cardFive.css('background-image', 'url("../assets/cards/' + cardArray[4] + '.png")');
+    }
+
     // do the initial setup for the game
     function setupTable() {
-        // shuffleCards(thisTable['cards']);
         sortPlayers(thisTable['players']);
-        // console.log(thisTable['cards']);
     }
 
     window.onload = setupTable();
@@ -177,7 +198,13 @@ $(document).ready(function () {
 
     socket.on('shuffled-deck', function (data) {
         thisTable['cards'] = data.deck;
-        console.log(thisTable['cards']);
+        for (var i = 0; i < data.cards.length; i++) {
+            if (player['username'] == data.cards[i].username) {
+                myCurrentCards = data.cards[i].cardsOnHand;
+            }
+        }
+        console.log(myCurrentCards);
+        displayCardsOnHand(myCurrentCards);
     })
 
     socket.on('game-chat', function (data) {
