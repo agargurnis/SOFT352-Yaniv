@@ -3,6 +3,7 @@ $(document).ready(function () {
     var socket = io.connect('http://localhost:4000');
     // query dom buttons
     var gameSendBtn = $('#game-send-btn')[0];
+    var startGameBtn = $('#start-game-btn')[0];
     // query dom form input fields
     var gameMessageField = $('#game-message-input')[0];
     // query dom form output fields
@@ -24,7 +25,7 @@ $(document).ready(function () {
     var cardThree = $('#card-three');
     var cardFour = $('#card-four');
     var cardFive = $('#card-five');
-    var deckFront = $('#deck-front')[0];
+    var deckFront = $('#deck-front');
     var deckBack = $('#deck-back')[0];
     // retrieve player object from local storage
     var urlString = window.location.href;
@@ -36,8 +37,10 @@ $(document).ready(function () {
 
     // create array for players and their cards
     var initialPlayerCards = new Array();
-    // store array of my current cards
+    // array of my current cards
     var myCurrentCards = new Array();
+    // array of cards to be swaped
+    var swapArray = new Array();
 
     // function to find index by key value pairs
     function findIndexByKeyValue(array, key, value) {
@@ -62,18 +65,62 @@ $(document).ready(function () {
         var thisCard = $(this)[0];
         thisCard.addEventListener('click', function () {
             if ($(this).hasClass('hover')) {
+                cardToSwap(thisCard.id);
                 thisCard.classList.add('selected');
                 thisCard.classList.remove('hover');
+                console.log(swapArray);
             } else if ($(this).hasClass('selected')) {
+                changedSwapMind(thisCard.id);
                 thisCard.classList.remove('selected');
                 thisCard.classList.add('hover');
+                console.log(swapArray);
             }
         })
     })
+    // add card indexes that will be swaped to an array
+    function cardToSwap(card) {
+        if (card == 'card-one') {
+            swapArray.push(0);
+        } else if (card == 'card-two') {
+            swapArray.push(1);
+        } else if (card == 'card-three') {
+            swapArray.push(2);
+        } else if (card == 'card-four') {
+            swapArray.push(3);
+        } else if (card == 'card-five') {
+            swapArray.push(4);
+        }
+    }
+    // remove card indexes from swap array
+    function changedSwapMind(card) {
+        if (card == 'card-one') {
+            swapArray.splice(swapArray.indexOf(0), 1);
+        } else if (card == 'card-two') {
+            swapArray.splice(swapArray.indexOf(1), 1);
+        } else if (card == 'card-three') {
+            swapArray.splice(swapArray.indexOf(2), 1);
+        } else if (card == 'card-four') {
+            swapArray.splice(swapArray.indexOf(3), 1);
+        } else if (card == 'card-five') {
+            swapArray.splice(swapArray.indexOf(4), 1);
+        }
+    }
+    // display new card
+    function displayNewCard(card, index) {
+        if (index == 0) {
+            cardOne.css('background-image', 'url("../assets/cards/' + card + '.png")');
+        } else if (index == 1) {
+            cardTwo.css('background-image', 'url("../assets/cards/' + card + '.png")');
+        } else if (index == 2) {
+            cardThree.css('background-image', 'url("../assets/cards/' + card + '.png")');
+        } else if (index == 3) {
+            cardFour.css('background-image', 'url("../assets/cards/' + card + '.png")');
+        } else if (index == 4) {
+            cardFive.css('background-image', 'url("../assets/cards/' + card + '.png")');
+        }
+    }
     // display players in their seats 
     function seatPlayers(playerArray) {
-        console.log(playerArray);
-
         if (playerArray.length == 1) {
             playerOne.innerHTML = '<p>' + playerArray[0].pointsOnHand + '<br />points</p>'
             playerOneColumn.innerHTML = '<p><strong>' + playerArray[0].username + '</strong></p>'
@@ -99,7 +146,6 @@ $(document).ready(function () {
             playerFour.innerHTML = '<p>' + playerArray[3].username + '<br />' + playerArray[3].cardsOnHand.length + ' cards</p>'
             playerFourColumn.innerHTML = '<p><strong>' + playerArray[3].username + '</strong></p>'
         }
-
     }
     // sort players array
     function sortPlayers(unsortedArray) {
@@ -141,7 +187,6 @@ $(document).ready(function () {
                 sortedArray = unsortedArray;
             }
         }
-
         seatPlayers(sortedArray);
     }
     // shuffle deck of cards 
@@ -153,17 +198,12 @@ $(document).ready(function () {
             array[j] = temp;
         }
     }
-    // shuffled deck of cards
-    deckBack.addEventListener('click', function () {
-        shuffleCards(thisTable['cards']);
-        dealCards(thisTable['players']);
-        socket.emit('shuffled-deck', {
-            deck: thisTable['cards'],
-            cards: initialPlayerCards
-        });
-    })
-    // hand out cards 
+    // hand out cards to everyone
     function dealCards(unsortedPlayerArray) {
+        // deal table cards
+        var initialOpeningCard = thisTable['cards'].pop();
+        deckFront.css('background-image', 'url("../assets/cards/' + initialOpeningCard + '.png")');
+        // deal player cards
         for (var i = 0; i < unsortedPlayerArray.length; i++) {
             for (var j = 0; j < 5; j++) {
                 var poppedCard = thisTable['cards'].pop();
@@ -175,7 +215,6 @@ $(document).ready(function () {
             });
         }
     }
-
     // display players cards on hand
     function displayCardsOnHand(cardArray) {
         cardOne.css('background-image', 'url("../assets/cards/' + cardArray[0] + '.png")');
@@ -184,18 +223,42 @@ $(document).ready(function () {
         cardFour.css('background-image', 'url("../assets/cards/' + cardArray[3] + '.png")');
         cardFive.css('background-image', 'url("../assets/cards/' + cardArray[4] + '.png")');
     }
-
+    // pick up a random card from the deck
+    function pickUpRandomCard() {
+        var randomCard = thisTable['cards'].pop();
+        var selectedCardIndex = swapArray[0];
+        var selectedCard = myCurrentCards.splice(selectedCardIndex, 1, randomCard);
+        // myCurrentCards.push(randomCard);
+        displayNewCard(randomCard, selectedCardIndex);
+        deckFront.css('background-image', 'url("../assets/cards/' + selectedCard + '.png")');
+    }
     // do the initial setup for the game
     function setupTable() {
         sortPlayers(thisTable['players']);
     }
 
     window.onload = setupTable();
-
+    // send to everyone the same shuffled deck of cards
+    startGameBtn.addEventListener('click', function () {
+        shuffleCards(thisTable['cards']);
+        dealCards(thisTable['players']);
+        socket.emit('shuffled-deck', {
+            deck: thisTable['cards'],
+            cards: initialPlayerCards
+        });
+        startGameBtn.classList.add('hidden');
+        deckFront[0].classList.remove('hidden');
+        deckBack.classList.remove('hidden');
+    })
+    // add event listener for when someone wants to pick up a random card from the deck
+    deckBack.addEventListener('click', function () {
+        pickUpRandomCard();
+    })
+    // add event listener for when someone starts typing
     gameMessageField.addEventListener('keypress', function () {
         socket.emit('player-typing', player["username"]);
     })
-
+    //
     socket.on('shuffled-deck', function (data) {
         thisTable['cards'] = data.deck;
         for (var i = 0; i < data.cards.length; i++) {
@@ -203,7 +266,6 @@ $(document).ready(function () {
                 myCurrentCards = data.cards[i].cardsOnHand;
             }
         }
-        console.log(myCurrentCards);
         displayCardsOnHand(myCurrentCards);
     })
 

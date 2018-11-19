@@ -233,9 +233,9 @@ body {
   background-position: center;
 }
 
-#deck-back:hover {
+/* #deck-back:hover {
   transform: scale(1.1);
-}
+} */
 
 #deck-front {
   position: relative;
@@ -249,8 +249,21 @@ body {
   background-position: center;
 }
 
-#deck-front:hover {
+/* #deck-front:hover {
   transform: scale(1.1);
+} */
+
+#start-game-btn {
+  position: relative;
+  padding-top: 20px;
+  font-size: 20px;
+  left: 163px;
+  bottom: 137px;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  border: 3px solid #000;
+  background-color: #5cb85c;
 }
 
 #game-table-square {
@@ -267,7 +280,6 @@ body {
   width: 500px;
   height: 21%;
   margin: 0 auto;
-  /* background-color: bisque; */
 }
 
 #card-one {
