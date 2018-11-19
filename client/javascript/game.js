@@ -41,6 +41,8 @@ $(document).ready(function () {
     var myCurrentCards = new Array();
     // array of cards to be swaped
     var swapArray = new Array();
+    // revealed middle card
+    var middleCard = '';
 
     // function to find index by key value pairs
     function findIndexByKeyValue(array, key, value) {
@@ -59,21 +61,75 @@ $(document).ready(function () {
             handle: player['username']
         });
     })
+    // check if second card chosen to swap is the same rank as the first
+    function checkRank(cardId, amountOfCards) {
+        // first card rank
+        var firstSelectionIndex = swapArray[0];
+        var firstSelectionStr = myCurrentCards[firstSelectionIndex];
+        var firstSelectionRank = firstSelectionStr.substr(0, firstSelectionStr.length - 2);
+        console.log(firstSelectionRank);
 
+        if (amountOfCards == 1) {
+            // second card rank
+            cardToSwap(cardId);
+            var secondSelectionIndex = swapArray[1];
+            var secondSelectionStr = myCurrentCards[secondSelectionIndex];
+            var secondSelectionRank = secondSelectionStr.substr(0, secondSelectionStr.length - 2);
+            console.log(secondSelectionRank);
+
+            // the check
+            if (firstSelectionRank == secondSelectionRank) {
+                return true;
+            } else {
+                swapArray.pop();
+            }
+        } else if (amountOfCards == 2) {
+            // second card rank
+            cardToSwap(cardId);
+            var thirdSelectionIndex = swapArray[2];
+            var thirdSelectionStr = myCurrentCards[thirdSelectionIndex];
+            var thirdSelectionRank = thirdSelectionStr.substr(0, thirdSelectionStr.length - 2);
+            console.log(thirdSelectionRank);
+
+            // the check
+            if (firstSelectionRank == thirdSelectionRank) {
+                return true;
+            } else {
+                swapArray.pop();
+            }
+        } else if (amountOfCards == 38) {
+            // second card rank
+            cardToSwap(cardId);
+            var fourthSelectionIndex = swapArray[3];
+            var fourthSelectionStr = myCurrentCards[fourthSelectionIndex];
+            var fourthSelectionRank = fourthSelectionStr.substr(0, fourthSelectionStr.length - 2);
+            // the check
+            if (firstSelectionRank == fourthSelectionRank) {
+                return true;
+            } else {
+                swapArray.pop();
+            }
+        }
+    }
     // card listeners
     $('.game-card').each(function () {
         var thisCard = $(this)[0];
         thisCard.addEventListener('click', function () {
-            if ($(this).hasClass('hover')) {
+            console.log(swapArray);
+
+            if ($(this).hasClass('hover') && swapArray.length > 0) {
+                if (checkRank(thisCard.id, swapArray.length)) {
+                    thisCard.classList.add('selected');
+                    thisCard.classList.remove('hover');
+                }
+            } else if ($(this).hasClass('hover')) {
                 cardToSwap(thisCard.id);
                 thisCard.classList.add('selected');
                 thisCard.classList.remove('hover');
-                console.log(swapArray);
             } else if ($(this).hasClass('selected')) {
-                changedSwapMind(thisCard.id);
+                swapArray.pop();
                 thisCard.classList.remove('selected');
                 thisCard.classList.add('hover');
-                console.log(swapArray);
             }
         })
     })
@@ -89,20 +145,6 @@ $(document).ready(function () {
             swapArray.push(3);
         } else if (card == 'card-five') {
             swapArray.push(4);
-        }
-    }
-    // remove card indexes from swap array
-    function changedSwapMind(card) {
-        if (card == 'card-one') {
-            swapArray.splice(swapArray.indexOf(0), 1);
-        } else if (card == 'card-two') {
-            swapArray.splice(swapArray.indexOf(1), 1);
-        } else if (card == 'card-three') {
-            swapArray.splice(swapArray.indexOf(2), 1);
-        } else if (card == 'card-four') {
-            swapArray.splice(swapArray.indexOf(3), 1);
-        } else if (card == 'card-five') {
-            swapArray.splice(swapArray.indexOf(4), 1);
         }
     }
     // display new card
@@ -189,6 +231,17 @@ $(document).ready(function () {
         }
         seatPlayers(sortedArray);
     }
+    // unselect all cards after a swap has been made
+    function unselectAllCards() {
+        swapArray = [];
+        $('.game-card').each(function () {
+            var thisCard = $(this)[0];
+            if ($(this).hasClass('selected')) {
+                thisCard.classList.remove('selected');
+                thisCard.classList.add('hover');
+            }
+        })
+    }
     // shuffle deck of cards 
     function shuffleCards(array) {
         for (var i = array.length - 1; i > 0; i--) {
@@ -201,8 +254,8 @@ $(document).ready(function () {
     // hand out cards to everyone
     function dealCards(unsortedPlayerArray) {
         // deal table cards
-        var initialOpeningCard = thisTable['cards'].pop();
-        deckFront.css('background-image', 'url("../assets/cards/' + initialOpeningCard + '.png")');
+        middleCard = thisTable['cards'].pop();
+        deckFront.css('background-image', 'url("../assets/cards/' + middleCard + '.png")');
         // deal player cards
         for (var i = 0; i < unsortedPlayerArray.length; i++) {
             for (var j = 0; j < 5; j++) {
@@ -227,9 +280,17 @@ $(document).ready(function () {
     function pickUpRandomCard() {
         var randomCard = thisTable['cards'].pop();
         var selectedCardIndex = swapArray[0];
-        var selectedCard = myCurrentCards.splice(selectedCardIndex, 1, randomCard);
-        // myCurrentCards.push(randomCard);
+        middleCard = myCurrentCards.splice(selectedCardIndex, 1, randomCard);
         displayNewCard(randomCard, selectedCardIndex);
+        deckFront.css('background-image', 'url("../assets/cards/' + middleCard + '.png")');
+    }
+    // pick up the revealed card from middle
+    function pickUpMiddleCard() {
+        // var randomCard = thisTable['cards'].pop();
+        var selectedCardIndex = swapArray[0];
+        var selectedCard = myCurrentCards.splice(selectedCardIndex, 1, middleCard);
+        displayNewCard(middleCard, selectedCardIndex);
+        middleCard = selectedCard;
         deckFront.css('background-image', 'url("../assets/cards/' + selectedCard + '.png")');
     }
     // do the initial setup for the game
@@ -253,6 +314,12 @@ $(document).ready(function () {
     // add event listener for when someone wants to pick up a random card from the deck
     deckBack.addEventListener('click', function () {
         pickUpRandomCard();
+        unselectAllCards();
+    })
+    // add event listener for when someone wants to pick the revealed middle card
+    deckFront[0].addEventListener('click', function () {
+        pickUpMiddleCard();
+        unselectAllCards();
     })
     // add event listener for when someone starts typing
     gameMessageField.addEventListener('keypress', function () {
