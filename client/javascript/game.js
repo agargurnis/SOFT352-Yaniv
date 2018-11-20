@@ -67,16 +67,12 @@ $(document).ready(function () {
         var firstSelectionIndex = swapArray[0];
         var firstSelectionStr = myCurrentCards[firstSelectionIndex];
         var firstSelectionRank = firstSelectionStr.substr(0, firstSelectionStr.length - 2);
-        console.log(firstSelectionRank);
-
         if (amountOfCards == 1) {
             // second card rank
             cardToSwap(cardId);
             var secondSelectionIndex = swapArray[1];
             var secondSelectionStr = myCurrentCards[secondSelectionIndex];
             var secondSelectionRank = secondSelectionStr.substr(0, secondSelectionStr.length - 2);
-            console.log(secondSelectionRank);
-
             // the check
             if (firstSelectionRank == secondSelectionRank) {
                 return true;
@@ -89,8 +85,6 @@ $(document).ready(function () {
             var thirdSelectionIndex = swapArray[2];
             var thirdSelectionStr = myCurrentCards[thirdSelectionIndex];
             var thirdSelectionRank = thirdSelectionStr.substr(0, thirdSelectionStr.length - 2);
-            console.log(thirdSelectionRank);
-
             // the check
             if (firstSelectionRank == thirdSelectionRank) {
                 return true;
@@ -115,8 +109,6 @@ $(document).ready(function () {
     $('.game-card').each(function () {
         var thisCard = $(this)[0];
         thisCard.addEventListener('click', function () {
-            console.log(swapArray);
-
             if ($(this).hasClass('hover') && swapArray.length > 0) {
                 if (checkRank(thisCard.id, swapArray.length)) {
                     thisCard.classList.add('selected');
@@ -255,7 +247,6 @@ $(document).ready(function () {
     function dealCards(unsortedPlayerArray) {
         // deal table cards
         middleCard = thisTable['cards'].pop();
-        deckFront.css('background-image', 'url("../assets/cards/' + middleCard + '.png")');
         // deal player cards
         for (var i = 0; i < unsortedPlayerArray.length; i++) {
             for (var j = 0; j < 5; j++) {
@@ -268,30 +259,99 @@ $(document).ready(function () {
             });
         }
     }
+    // hide start button and display middle cards 
+    function hideStartDisplayDeck() {
+        startGameBtn.classList.add('hidden');
+        deckFront[0].classList.remove('hidden');
+        deckBack.classList.remove('hidden');
+    }
+    // display updated middle card
+    function displayMiddleCard() {
+        deckFront.css('background-image', 'url("../assets/cards/' + middleCard + '.png")');
+    }
     // display players cards on hand
     function displayCardsOnHand(cardArray) {
-        cardOne.css('background-image', 'url("../assets/cards/' + cardArray[0] + '.png")');
-        cardTwo.css('background-image', 'url("../assets/cards/' + cardArray[1] + '.png")');
-        cardThree.css('background-image', 'url("../assets/cards/' + cardArray[2] + '.png")');
-        cardFour.css('background-image', 'url("../assets/cards/' + cardArray[3] + '.png")');
-        cardFive.css('background-image', 'url("../assets/cards/' + cardArray[4] + '.png")');
+        if (cardArray.length == 1) {
+            cardOne.css('background-image', 'url("../assets/cards/' + cardArray[0] + '.png")');
+            cardTwo[0].classList.add('hidden');
+            cardThree[0].classList.add('hidden');
+            cardFour[0].classList.add('hidden');
+            cardFive[0].classList.add('hidden');
+        } else if (cardArray.length == 2) {
+            cardOne.css('background-image', 'url("../assets/cards/' + cardArray[0] + '.png")');
+            cardTwo.css('background-image', 'url("../assets/cards/' + cardArray[1] + '.png")');
+            cardThree[0].classList.add('hidden');
+            cardFour[0].classList.add('hidden');
+            cardFive[0].classList.add('hidden');
+        } else if (cardArray.length == 3) {
+            cardOne.css('background-image', 'url("../assets/cards/' + cardArray[0] + '.png")');
+            cardTwo.css('background-image', 'url("../assets/cards/' + cardArray[1] + '.png")');
+            cardThree.css('background-image', 'url("../assets/cards/' + cardArray[2] + '.png")');
+            cardFour[0].classList.add('hidden');
+            cardFive[0].classList.add('hidden');
+        } else if (cardArray.length == 4) {
+            cardOne.css('background-image', 'url("../assets/cards/' + cardArray[0] + '.png")');
+            cardTwo.css('background-image', 'url("../assets/cards/' + cardArray[1] + '.png")');
+            cardThree.css('background-image', 'url("../assets/cards/' + cardArray[2] + '.png")');
+            cardFour.css('background-image', 'url("../assets/cards/' + cardArray[3] + '.png")');
+            cardFive[0].classList.add('hidden');
+        } else if (cardArray.length == 5) {
+            cardOne.css('background-image', 'url("../assets/cards/' + cardArray[0] + '.png")');
+            cardTwo.css('background-image', 'url("../assets/cards/' + cardArray[1] + '.png")');
+            cardThree.css('background-image', 'url("../assets/cards/' + cardArray[2] + '.png")');
+            cardFour.css('background-image', 'url("../assets/cards/' + cardArray[3] + '.png")');
+            cardFive.css('background-image', 'url("../assets/cards/' + cardArray[4] + '.png")');
+        }
+    }
+    // get rid of any extra cards if selected 
+    function discardExtraCards() {
+        // sort arrray in a descending order
+        var sortedSwapArray = swapArray.sort(function (a, b) {
+            return b - a
+        });
+
+        if (sortedSwapArray.length == 1) {
+            myCurrentCards.splice(sortedSwapArray[0], 1);
+        } else if (sortedSwapArray.length == 2) {
+            myCurrentCards.splice(sortedSwapArray[0], 1);
+            myCurrentCards.splice(sortedSwapArray[1], 1);
+        } else if (sortedSwapArray.length == 3) {
+            myCurrentCards.splice(sortedSwapArray[0], 1);
+            myCurrentCards.splice(sortedSwapArray[1], 1);
+            myCurrentCards.splice(sortedSwapArray[2], 1);
+        }
     }
     // pick up a random card from the deck
     function pickUpRandomCard() {
-        var randomCard = thisTable['cards'].pop();
-        var selectedCardIndex = swapArray[0];
-        middleCard = myCurrentCards.splice(selectedCardIndex, 1, randomCard);
-        displayNewCard(randomCard, selectedCardIndex);
-        deckFront.css('background-image', 'url("../assets/cards/' + middleCard + '.png")');
+        console.log(thisTable['cards']);
+        if (swapArray.length > 0) {
+            var randomCard = thisTable['cards'].pop();
+            var selectedCardIndex = swapArray[0];
+            swapArray.splice(0, 1);
+            var middleCardArray = myCurrentCards.splice(selectedCardIndex, 1, randomCard);
+            middleCard = middleCardArray[0];
+            if (swapArray.length > 0) {
+                discardExtraCards();
+            }
+            displayCardsOnHand(myCurrentCards);
+            deckFront.css('background-image', 'url("../assets/cards/' + middleCard + '.png")');
+        }
+
     }
     // pick up the revealed card from middle
     function pickUpMiddleCard() {
-        // var randomCard = thisTable['cards'].pop();
-        var selectedCardIndex = swapArray[0];
-        var selectedCard = myCurrentCards.splice(selectedCardIndex, 1, middleCard);
-        displayNewCard(middleCard, selectedCardIndex);
-        middleCard = selectedCard;
-        deckFront.css('background-image', 'url("../assets/cards/' + selectedCard + '.png")');
+        console.log(thisTable['cards']);
+        if (swapArray.length > 0) {
+            var selectedCardIndex = swapArray[0];
+            swapArray.splice(0, 1);
+            var selectedCard = myCurrentCards.splice(selectedCardIndex, 1, middleCard);
+            middleCard = selectedCard[0];
+            if (swapArray.length > 0) {
+                discardExtraCards();
+            }
+            displayCardsOnHand(myCurrentCards);
+            deckFront.css('background-image', 'url("../assets/cards/' + middleCard + '.png")');
+        }
     }
     // do the initial setup for the game
     function setupTable() {
@@ -305,42 +365,57 @@ $(document).ready(function () {
         dealCards(thisTable['players']);
         socket.emit('shuffled-deck', {
             deck: thisTable['cards'],
-            cards: initialPlayerCards
+            cards: initialPlayerCards,
+            middleCard: middleCard
         });
-        startGameBtn.classList.add('hidden');
-        deckFront[0].classList.remove('hidden');
-        deckBack.classList.remove('hidden');
     })
     // add event listener for when someone wants to pick up a random card from the deck
     deckBack.addEventListener('click', function () {
         pickUpRandomCard();
         unselectAllCards();
+        socket.emit('card-swapped', {
+            deck: thisTable['cards'],
+            middleCard: middleCard
+        });
     })
     // add event listener for when someone wants to pick the revealed middle card
     deckFront[0].addEventListener('click', function () {
         pickUpMiddleCard();
         unselectAllCards();
+        socket.emit('card-swapped', {
+            deck: thisTable['cards'],
+            middleCard: middleCard
+        });
     })
     // add event listener for when someone starts typing
     gameMessageField.addEventListener('keypress', function () {
         socket.emit('player-typing', player["username"]);
     })
-    //
+    // synchronize every deck so it has the same card in the pile as well as make sure each person has unique cards
     socket.on('shuffled-deck', function (data) {
         thisTable['cards'] = data.deck;
+        middleCard = data.middleCard;
         for (var i = 0; i < data.cards.length; i++) {
             if (player['username'] == data.cards[i].username) {
                 myCurrentCards = data.cards[i].cardsOnHand;
             }
         }
         displayCardsOnHand(myCurrentCards);
+        hideStartDisplayDeck();
+        displayMiddleCard();
     })
-
+    // update the game middle card and the deck so it is in sync with the rest of the players
+    socket.on('card-swapped', function (data) {
+        thisTable['cards'] = data.deck;
+        middleCard = data.middleCard;
+        displayMiddleCard();
+    })
+    // update the game chat window with the most recent messages
     socket.on('game-chat', function (data) {
         gameTypingDetector.innerHTML = '';
         gameChatOutput.innerHTML += '<p><strong>' + data.handle + ': </strong>' + data.message + '</p>';
     })
-
+    // update the chat window to inform the other players if someone starts typing
     socket.on('player-typing', function (data) {
         gameTypingDetector.innerHTML = '<p><em>' + data + ' is typing...</em></p>';
     })
