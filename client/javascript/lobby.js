@@ -50,10 +50,19 @@ $(document).ready(function () {
         var tableData = {
             "tableId": tableId
         }
+        // check if the user has previously visited the same game
+        var thisTablePlayers = gameTable['players'];
+        for (var i = 0; i < thisTablePlayers.length; i++) {
+            // if the user already exists on table then redirect him to the game table
+            if (thisTablePlayers[i].username == player.username) {
+                window.location.href = "http://localhost:4000/game?table=" + tableName + "&name=" + player["username"];
+                return;
+            }
+        }
+        // if first time then add him to the game object in the local storage and add the user to the database
         axios
             .post('/api/game/join', tableData)
             .then(response => {
-                // tablePlayers.push(player);
                 gameTable["players"].push(player);
                 localStorage.setItem(tableName, JSON.stringify(gameTable));
                 socket.emit('game-joined', "A game has been joined");

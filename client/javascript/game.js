@@ -89,7 +89,6 @@ $(document).ready(function () {
     var swapArray = new Array();
     // revealed middle card
     var middleCard = '';
-
     // function to find index by key value pairs
     function findIndexByKeyValue(array, key, value) {
         for (var i = 0; i < array.length; i++) {
@@ -99,7 +98,6 @@ $(document).ready(function () {
         }
         return -1;
     }
-
     // game container listeners
     gameSendBtn.addEventListener('click', function () {
         socket.emit('game-chat', {
@@ -213,6 +211,7 @@ $(document).ready(function () {
     function seatPlayers(playerArray) {
         if (playerArray.length == 1) {
             playerOneColumn.innerHTML = '<p><strong>' + playerArray[0].username + '</strong></p>'
+            startGameBtn.classList.remove('hidden');
         } else if (playerArray.length == 2) {
             playerOneColumn.innerHTML = '<p><strong>' + playerArray[0].username + '</strong></p>'
             playerTwo.innerHTML = '<p>' + playerArray[1].username + '<br />5 cards</p>'
@@ -233,8 +232,29 @@ $(document).ready(function () {
             playerFourColumn.innerHTML = '<p><strong>' + playerArray[3].username + '</strong></p>'
         }
     }
+    // check whos turn is it
+    function checkWhosTurn() {
+        for (var i = 0; i < sortedArray.length; i++) {
+            if (sortedArray[i].myTurn == true) {
+                if (i == 0) {
+                    playerOne.classList.add('my-turn')
+                } else if (i == 1) {
+                    playerTwo.classList.add('my-turn')
+                } else if (i == 2) {
+                    playerThree.classList.add('my-turn')
+                } else if (i == 3) {
+                    playerFour.classList.add('my-turn')
+                }
+            }
+        }
+    }
+    // finish your turn
+    function finishYourTurn() {
+
+    }
     // sort players array
     function sortPlayers(unsortedArray) {
+        unsortedArray[0].myTurn = true;
         var playerIndex = findIndexByKeyValue(unsortedArray, 'username', player['username']);
         sortedArray.push(player);
         if (unsortedArray.length == 1) {
@@ -273,6 +293,7 @@ $(document).ready(function () {
             }
         }
         seatPlayers(sortedArray);
+        checkWhosTurn();
     }
     // unselect all cards after a swap has been made
     function unselectAllCards() {
@@ -311,8 +332,7 @@ $(document).ready(function () {
         }
     }
     // hide start button and display middle cards 
-    function hideStartDisplayDeck() {
-        startGameBtn.classList.add('hidden');
+    function displayDeck() {
         deckFront[0].classList.remove('hidden');
         deckBack.classList.remove('hidden');
     }
@@ -419,6 +439,7 @@ $(document).ready(function () {
             cards: initialPlayerCards,
             middleCard: middleCard
         });
+        startGameBtn.classList.add('hidden');
     })
     // add event listener for when someone wants to pick up a random card from the deck
     deckBack.addEventListener('click', function () {
@@ -456,7 +477,7 @@ $(document).ready(function () {
             }
         }
         displayCardsOnHand(myCurrentCards);
-        hideStartDisplayDeck();
+        displayDeck();
         displayMiddleCard();
         myPointsOnHand(myCurrentCards);
     })
@@ -476,4 +497,22 @@ $(document).ready(function () {
     socket.on('player-typing', function (data) {
         gameTypingDetector.innerHTML = '<p><em>' + data + ' is typing...</em></p>';
     })
+    // add the new player on the array if he does not alreadt exist on it
+    socket.on('player-joined', function (data) {
+        var thisTablePlayers = thisTable['players'];
+        for (var i = 0; i < thisTablePlayers.length; i++) {
+            // check if user already exists on table then do nothing
+            if (thisTablePlayers[i].username == data.username) {
+                return;
+            }
+        }
+        // else add the new player
+        thisTable['players'].push(data)
+        seatPlayers(thisTable['players']);
+    })
+    // inform players on the table that there a new player has joined
+    socket.on('connect', function () {
+        socket.emit('player-joined', player);
+    })
+
 });

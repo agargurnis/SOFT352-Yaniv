@@ -82,4 +82,8 @@ io.on('connection', function (socket) {
     socket.on('card-swapped', function (data) {
         socket.broadcast.emit('card-swapped', data);
     })
+    // game actions
+    socket.on('player-joined', function (data) {
+        socket.broadcast.emit('player-joined', data);
+    })
 })
