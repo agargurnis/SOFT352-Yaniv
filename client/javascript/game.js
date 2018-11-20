@@ -35,6 +35,52 @@ $(document).ready(function () {
     var player = JSON.parse(localStorage.getItem(playerKey));
     var thisTable = JSON.parse(localStorage.getItem(tableKey));
 
+    // card point value array
+    var cardPointValues = [{
+        'rank': 'joker',
+        'value': 0
+    }, {
+        'rank': 'ace',
+        'value': 1
+    }, {
+        'rank': '2',
+        'value': 2
+    }, {
+        'rank': '3',
+        'value': 3
+    }, {
+        'rank': '4',
+        'value': 4
+    }, {
+        'rank': '5',
+        'value': 5
+    }, {
+        'rank': '6',
+        'value': 6
+    }, {
+        'rank': '7',
+        'value': 7
+    }, {
+        'rank': '8',
+        'value': 8
+    }, {
+        'rank': '9',
+        'value': 9
+    }, {
+        'rank': '10',
+        'value': 10
+    }, {
+        'rank': 'jack',
+        'value': 10
+    }, {
+        'rank': 'queen',
+        'value': 10
+    }, {
+        'rank': 'king',
+        'value': 10
+    }]
+    // create array to seat players correctly for each individual
+    var sortedArray = new Array();
     // create array for players and their cards
     var initialPlayerCards = new Array();
     // array of my current cards
@@ -139,52 +185,57 @@ $(document).ready(function () {
             swapArray.push(4);
         }
     }
-    // display new card
-    function displayNewCard(card, index) {
-        if (index == 0) {
-            cardOne.css('background-image', 'url("../assets/cards/' + card + '.png")');
-        } else if (index == 1) {
-            cardTwo.css('background-image', 'url("../assets/cards/' + card + '.png")');
-        } else if (index == 2) {
-            cardThree.css('background-image', 'url("../assets/cards/' + card + '.png")');
-        } else if (index == 3) {
-            cardFour.css('background-image', 'url("../assets/cards/' + card + '.png")');
-        } else if (index == 4) {
-            cardFive.css('background-image', 'url("../assets/cards/' + card + '.png")');
+    // display other player card number
+    function updateOthersCardOnHand(whoSwapped, cardsLeftOnHand) {
+        var who = findIndexByKeyValue(sortedArray, 'username', whoSwapped)
+
+        if (who == 1) {
+            playerTwo.innerHTML = '<p>' + sortedArray[1].username + '<br />' + cardsLeftOnHand + ' cards</p>'
+        } else if (who == 2) {
+            playerThree.innerHTML = '<p>' + sortedArray[2].username + '<br />' + cardsLeftOnHand + ' cards</p>'
+        } else if (who == 3) {
+            playerFour.innerHTML = '<p>' + sortedArray[3].username + '<br />' + cardsLeftOnHand + ' cards</p>'
         }
+    }
+    // update and display current players points on hand
+    function myPointsOnHand(cardArray) {
+        var myPoints = 0;
+        for (var i = 0; i < cardArray.length; i++) {
+            var theCardStr = cardArray[i];
+            var theCardRank = theCardStr.substr(0, theCardStr.length - 2)
+            var theCardValueIndex = findIndexByKeyValue(cardPointValues, 'rank', theCardRank);
+            var theCardValue = cardPointValues[theCardValueIndex].value;
+            myPoints += theCardValue;
+        }
+        playerOne.innerHTML = '<p>' + myPoints + '<br />points</p>'
     }
     // display players in their seats 
     function seatPlayers(playerArray) {
         if (playerArray.length == 1) {
-            playerOne.innerHTML = '<p>' + playerArray[0].pointsOnHand + '<br />points</p>'
             playerOneColumn.innerHTML = '<p><strong>' + playerArray[0].username + '</strong></p>'
         } else if (playerArray.length == 2) {
-            playerOne.innerHTML = '<p>' + playerArray[0].pointsOnHand + '<br />points</p>'
             playerOneColumn.innerHTML = '<p><strong>' + playerArray[0].username + '</strong></p>'
-            playerTwo.innerHTML = '<p>' + playerArray[1].username + '<br />' + playerArray[1].cardsOnHand.length + ' cards</p>'
+            playerTwo.innerHTML = '<p>' + playerArray[1].username + '<br />5 cards</p>'
             playerTwoColumn.innerHTML = '<p><strong>' + playerArray[1].username + '</strong></p>'
         } else if (playerArray.length == 3) {
-            playerOne.innerHTML = '<p>' + playerArray[0].pointsOnHand + '<br />points</p>'
             playerOneColumn.innerHTML = '<p><strong>' + playerArray[0].username + '</strong></p>'
-            playerTwo.innerHTML = '<p>' + playerArray[1].username + '<br />' + playerArray[1].cardsOnHand.length + ' cards</p>'
+            playerTwo.innerHTML = '<p>' + playerArray[1].username + '<br />5 cards</p>'
             playerTwoColumn.innerHTML = '<p><strong>' + playerArray[1].username + '</strong></p>'
-            playerThree.innerHTML = '<p>' + playerArray[2].username + '<br />' + playerArray[2].cardsOnHand.length + ' cards</p>'
+            playerThree.innerHTML = '<p>' + playerArray[2].username + '<br />5 cards</p>'
             playerThreeColumn.innerHTML = '<p><strong>' + playerArray[2].username + '</strong></p>'
         } else if (playerArray.length == 4) {
-            playerOne.innerHTML = '<p>' + playerArray[0].pointsOnHand + '<br />points</p>'
             playerOneColumn.innerHTML = '<p><strong>' + playerArray[0].username + '</strong></p>'
-            playerTwo.innerHTML = '<p>' + playerArray[1].username + '<br />' + playerArray[1].cardsOnHand.length + ' cards</p>'
+            playerTwo.innerHTML = '<p>' + playerArray[1].username + '<br />5 cards</p>'
             playerTwoColumn.innerHTML = '<p><strong>' + playerArray[1].username + '</strong></p>'
-            playerThree.innerHTML = '<p>' + playerArray[2].username + '<br />' + playerArray[2].cardsOnHand.length + ' cards</p>'
+            playerThree.innerHTML = '<p>' + playerArray[2].username + '<br />5 cards</p>'
             playerThreeColumn.innerHTML = '<p><strong>' + playerArray[2].username + '</strong></p>'
-            playerFour.innerHTML = '<p>' + playerArray[3].username + '<br />' + playerArray[3].cardsOnHand.length + ' cards</p>'
+            playerFour.innerHTML = '<p>' + playerArray[3].username + '<br />5 cards</p>'
             playerFourColumn.innerHTML = '<p><strong>' + playerArray[3].username + '</strong></p>'
         }
     }
     // sort players array
     function sortPlayers(unsortedArray) {
         var playerIndex = findIndexByKeyValue(unsortedArray, 'username', player['username']);
-        var sortedArray = new Array();
         sortedArray.push(player);
         if (unsortedArray.length == 1) {
             sortedArray = unsortedArray
@@ -323,7 +374,6 @@ $(document).ready(function () {
     }
     // pick up a random card from the deck
     function pickUpRandomCard() {
-        console.log(thisTable['cards']);
         if (swapArray.length > 0) {
             var randomCard = thisTable['cards'].pop();
             var selectedCardIndex = swapArray[0];
@@ -334,13 +384,13 @@ $(document).ready(function () {
                 discardExtraCards();
             }
             displayCardsOnHand(myCurrentCards);
+            myPointsOnHand(myCurrentCards);
             deckFront.css('background-image', 'url("../assets/cards/' + middleCard + '.png")');
         }
 
     }
     // pick up the revealed card from middle
     function pickUpMiddleCard() {
-        console.log(thisTable['cards']);
         if (swapArray.length > 0) {
             var selectedCardIndex = swapArray[0];
             swapArray.splice(0, 1);
@@ -350,6 +400,7 @@ $(document).ready(function () {
                 discardExtraCards();
             }
             displayCardsOnHand(myCurrentCards);
+            myPointsOnHand(myCurrentCards);
             deckFront.css('background-image', 'url("../assets/cards/' + middleCard + '.png")');
         }
     }
@@ -375,7 +426,9 @@ $(document).ready(function () {
         unselectAllCards();
         socket.emit('card-swapped', {
             deck: thisTable['cards'],
-            middleCard: middleCard
+            middleCard: middleCard,
+            whoSwapped: player['username'],
+            cardsLeftOnHand: myCurrentCards.length
         });
     })
     // add event listener for when someone wants to pick the revealed middle card
@@ -384,12 +437,14 @@ $(document).ready(function () {
         unselectAllCards();
         socket.emit('card-swapped', {
             deck: thisTable['cards'],
-            middleCard: middleCard
+            middleCard: middleCard,
+            whoSwapped: player['username'],
+            cardsLeftOnHand: myCurrentCards.length
         });
     })
     // add event listener for when someone starts typing
     gameMessageField.addEventListener('keypress', function () {
-        socket.emit('player-typing', player["username"]);
+        socket.emit('player-typing', player['username']);
     })
     // synchronize every deck so it has the same card in the pile as well as make sure each person has unique cards
     socket.on('shuffled-deck', function (data) {
@@ -403,12 +458,14 @@ $(document).ready(function () {
         displayCardsOnHand(myCurrentCards);
         hideStartDisplayDeck();
         displayMiddleCard();
+        myPointsOnHand(myCurrentCards);
     })
     // update the game middle card and the deck so it is in sync with the rest of the players
     socket.on('card-swapped', function (data) {
         thisTable['cards'] = data.deck;
         middleCard = data.middleCard;
         displayMiddleCard();
+        updateOthersCardOnHand(data.whoSwapped, data.cardsLeftOnHand);
     })
     // update the game chat window with the most recent messages
     socket.on('game-chat', function (data) {
