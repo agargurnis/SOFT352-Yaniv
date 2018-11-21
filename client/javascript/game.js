@@ -34,7 +34,6 @@ $(document).ready(function () {
     var tableKey = url.searchParams.get("table");
     var player = JSON.parse(localStorage.getItem(playerKey));
     var thisTable = JSON.parse(localStorage.getItem(tableKey));
-
     // card point value array
     var cardPointValues = [{
         'rank': 'joker',
@@ -79,8 +78,9 @@ $(document).ready(function () {
         'rank': 'king',
         'value': 10
     }]
+
     // create array to seat players correctly for each individual
-    var sortedArray = new Array();
+    var sortedArray = [{}, {}, {}, {}];
     // create array for players and their cards
     var initialPlayerCards = new Array();
     // array of my current cards
@@ -89,6 +89,8 @@ $(document).ready(function () {
     var swapArray = new Array();
     // revealed middle card
     var middleCard = '';
+    // next player username
+    var nextPlayer = '';
     // function to find index by key value pairs
     function findIndexByKeyValue(array, key, value) {
         for (var i = 0; i < array.length; i++) {
@@ -207,33 +209,26 @@ $(document).ready(function () {
         }
         playerOne.innerHTML = '<p>' + myPoints + '<br />points</p>'
     }
+    // check if array object is empty
+    function isEmpty(obj) {
+        return obj.length === 0;
+    }
     // display players in their seats 
     function seatPlayers(playerArray) {
-        if (playerArray.length == 1) {
-            playerOneColumn.innerHTML = '<p><strong>' + playerArray[0].username + '</strong></p>'
-            startGameBtn.classList.remove('hidden');
-        } else if (playerArray.length == 2) {
-            playerOneColumn.innerHTML = '<p><strong>' + playerArray[0].username + '</strong></p>'
-            playerTwo.innerHTML = '<p>' + playerArray[1].username + '<br />5 cards</p>'
-            playerTwoColumn.innerHTML = '<p><strong>' + playerArray[1].username + '</strong></p>'
-        } else if (playerArray.length == 3) {
-            playerOneColumn.innerHTML = '<p><strong>' + playerArray[0].username + '</strong></p>'
-            playerTwo.innerHTML = '<p>' + playerArray[1].username + '<br />5 cards</p>'
-            playerTwoColumn.innerHTML = '<p><strong>' + playerArray[1].username + '</strong></p>'
-            playerThree.innerHTML = '<p>' + playerArray[2].username + '<br />5 cards</p>'
-            playerThreeColumn.innerHTML = '<p><strong>' + playerArray[2].username + '</strong></p>'
-        } else if (playerArray.length == 4) {
-            playerOneColumn.innerHTML = '<p><strong>' + playerArray[0].username + '</strong></p>'
-            playerTwo.innerHTML = '<p>' + playerArray[1].username + '<br />5 cards</p>'
-            playerTwoColumn.innerHTML = '<p><strong>' + playerArray[1].username + '</strong></p>'
-            playerThree.innerHTML = '<p>' + playerArray[2].username + '<br />5 cards</p>'
-            playerThreeColumn.innerHTML = '<p><strong>' + playerArray[2].username + '</strong></p>'
-            playerFour.innerHTML = '<p>' + playerArray[3].username + '<br />5 cards</p>'
-            playerFourColumn.innerHTML = '<p><strong>' + playerArray[3].username + '</strong></p>'
-        }
+        playerOneColumn.innerHTML = playerArray[0].username == null ? '' : '<p><strong>' + playerArray[0].username + '</strong></p>'
+        playerTwo.innerHTML = playerArray[1].username == null ? '' : '<p>' + playerArray[1].username + '<br />5 cards</p>'
+        playerTwoColumn.innerHTML = playerArray[1].username == null ? '' : '<p><strong>' + playerArray[1].username + '</strong></p>'
+        playerThree.innerHTML = playerArray[2].username == null ? '' : '<p>' + playerArray[2].username + '<br />5 cards</p>'
+        playerThreeColumn.innerHTML = playerArray[2].username == null ? '' : '<p><strong>' + playerArray[2].username + '</strong></p>'
+        playerFour.innerHTML = playerArray[3].username == null ? '' : '<p>' + playerArray[3].username + '<br />5 cards</p>'
+        playerFourColumn.innerHTML = playerArray[3].username == null ? '' : '<p><strong>' + playerArray[3].username + '</strong></p>'
     }
-    // check whos turn is it
-    function checkWhosTurn() {
+    // display whos turn is it
+    function displayWhosTurn() {
+        $('.player').each(function () {
+            var thisPlayer = $(this)[0];
+            thisPlayer.classList.remove('my-turn');
+        })
         for (var i = 0; i < sortedArray.length; i++) {
             if (sortedArray[i].myTurn == true) {
                 if (i == 0) {
@@ -249,51 +244,80 @@ $(document).ready(function () {
         }
     }
     // finish your turn
-    function finishYourTurn() {
-
+    function finishMyTurn() {
+        var nextPlayerIndex = 0;
+        for (var i = 0; i < sortedArray.length; i++) {
+            if (sortedArray[i].myTurn == true) {
+                if (i == 3) {
+                    nextPlayerIndex = 0
+                } else {
+                    nextPlayerIndex = i + 1
+                }
+            }
+        }
+        nextPlayer = sortedArray[nextPlayerIndex].username;
+        startNextTurn(player['username'], nextPlayer);
+    }
+    // start next players turn
+    function startNextTurn(previousPlayerUsername, nextPlayerUsername) {
+        var nextPlayersIndex = findIndexByKeyValue(sortedArray, 'username', nextPlayerUsername);
+        var previousPlayersIndex = findIndexByKeyValue(sortedArray, 'username', previousPlayerUsername);
+        sortedArray[previousPlayersIndex].myTurn = false;
+        sortedArray[nextPlayersIndex].myTurn = true;
+        displayWhosTurn();
     }
     // sort players array
     function sortPlayers(unsortedArray) {
         unsortedArray[0].myTurn = true;
         var playerIndex = findIndexByKeyValue(unsortedArray, 'username', player['username']);
-        sortedArray.push(player);
         if (unsortedArray.length == 1) {
-            sortedArray = unsortedArray
+            sortedArray[0] = unsortedArray[0];
+            startGameBtn.classList.remove('hidden');
         } else if (unsortedArray.length == 2) {
-            if (playerIndex == 1) {
-                sortedArray.push(unsortedArray[0]);
-            } else {
-                sortedArray = unsortedArray;
+            if (playerIndex == 0) {
+                sortedArray[0] = unsortedArray[0];
+                sortedArray[1] = unsortedArray[1];
+            } else if (playerIndex == 1) {
+                sortedArray[0] = unsortedArray[1];
+                sortedArray[3] = unsortedArray[0];
             }
         } else if (unsortedArray.length == 3) {
-            if (playerIndex == 1) {
-                sortedArray.push(unsortedArray[2]);
-                sortedArray.push(unsortedArray[0]);
+            if (playerIndex == 0) {
+                sortedArray[0] = unsortedArray[0];
+                sortedArray[1] = unsortedArray[1];
+                sortedArray[2] = unsortedArray[2];
+            } else if (playerIndex == 1) {
+                sortedArray[0] = unsortedArray[1];
+                sortedArray[3] = unsortedArray[0];
+                sortedArray[1] = unsortedArray[2];
             } else if (playerIndex == 2) {
-                sortedArray.push(unsortedArray[0]);
-                sortedArray.push(unsortedArray[1]);
-            } else {
-                sortedArray = unsortedArray;
+                sortedArray[0] = unsortedArray[2];
+                sortedArray[3] = unsortedArray[1];
+                sortedArray[2] = unsortedArray[0];
             }
         } else if (unsortedArray.length == 4) {
             if (playerIndex == 1) {
-                sortedArray.push(unsortedArray[2]);
-                sortedArray.push(unsortedArray[3]);
-                sortedArray.push(unsortedArray[0]);
+                sortedArray[0] = unsortedArray[1];
+                sortedArray[1] = unsortedArray[2];
+                sortedArray[2] = unsortedArray[3];
+                sortedArray[3] = unsortedArray[0];
+
             } else if (playerIndex == 2) {
-                sortedArray.push(unsortedArray[3]);
-                sortedArray.push(unsortedArray[0]);
-                sortedArray.push(unsortedArray[1]);
+                sortedArray[0] = unsortedArray[2];
+                sortedArray[1] = unsortedArray[3];
+                sortedArray[2] = unsortedArray[0];
+                sortedArray[3] = unsortedArray[1];
             } else if (playerIndex == 3) {
-                sortedArray.push(unsortedArray[0]);
-                sortedArray.push(unsortedArray[1]);
-                sortedArray.push(unsortedArray[2]);
+                sortedArray[0] = unsortedArray[3];
+                sortedArray[1] = unsortedArray[0];
+                sortedArray[2] = unsortedArray[1];
+                sortedArray[3] = unsortedArray[2];
             } else {
-                sortedArray = unsortedArray;
+                sortedArray = unsortedArray
             }
         }
         seatPlayers(sortedArray);
-        checkWhosTurn();
+        displayWhosTurn();
     }
     // unselect all cards after a swap has been made
     function unselectAllCards() {
@@ -445,23 +469,28 @@ $(document).ready(function () {
     deckBack.addEventListener('click', function () {
         pickUpRandomCard();
         unselectAllCards();
+        finishMyTurn();
         socket.emit('card-swapped', {
             deck: thisTable['cards'],
             middleCard: middleCard,
             whoSwapped: player['username'],
-            cardsLeftOnHand: myCurrentCards.length
+            cardsLeftOnHand: myCurrentCards.length,
+            nextPlayer: nextPlayer
         });
     })
     // add event listener for when someone wants to pick the revealed middle card
     deckFront[0].addEventListener('click', function () {
         pickUpMiddleCard();
         unselectAllCards();
+        finishMyTurn();
         socket.emit('card-swapped', {
             deck: thisTable['cards'],
             middleCard: middleCard,
             whoSwapped: player['username'],
-            cardsLeftOnHand: myCurrentCards.length
+            cardsLeftOnHand: myCurrentCards.length,
+            nextPlayer: nextPlayer
         });
+
     })
     // add event listener for when someone starts typing
     gameMessageField.addEventListener('keypress', function () {
@@ -487,6 +516,7 @@ $(document).ready(function () {
         middleCard = data.middleCard;
         displayMiddleCard();
         updateOthersCardOnHand(data.whoSwapped, data.cardsLeftOnHand);
+        startNextTurn(data.whoSwapped, data.nextPlayer);
     })
     // update the game chat window with the most recent messages
     socket.on('game-chat', function (data) {
@@ -508,11 +538,16 @@ $(document).ready(function () {
         }
         // else add the new player
         thisTable['players'].push(data)
-        seatPlayers(thisTable['players']);
+        // setupTable();
+        sortPlayers(thisTable['players']);
     })
     // inform players on the table that there a new player has joined
     socket.on('connect', function () {
-        socket.emit('player-joined', player);
+        socket.emit('table', tableKey);
+        socket.emit('player-joined', {
+            table: tableKey,
+            player: player
+        })
     })
 
 });

@@ -40,8 +40,6 @@ body {
 }
 
 .selected {
-  /* opacity: 0.5; */
-  /* background-color: #000; */
   transform: translateY(-15px);
 }
 
