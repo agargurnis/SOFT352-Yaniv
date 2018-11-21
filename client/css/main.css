@@ -193,7 +193,7 @@ body {
 #call-yaniv {
   position: relative;
   left: 356px;
-  bottom: 21px;
+  bottom: 222px;
   width: 75px;
   height: 75px;
   border-radius: 50%;
@@ -248,7 +248,7 @@ body {
 #deck-back {
   position: relative;
   left: 210px;
-  bottom: 249px;
+  bottom: 325px;
   width: 75px;
   height: 100px;
   background-image: url("../assets/cards/deck.png");
@@ -260,7 +260,7 @@ body {
 #deck-front {
   position: relative;
   left: 116px;
-  bottom: 150px;
+  bottom: 225px;
   width: 75px;
   height: 100px;
   background-image: url("../assets/cards/ace-S.png");
@@ -274,7 +274,7 @@ body {
   padding-top: 20px;
   font-size: 20px;
   left: 163px;
-  bottom: 137px;
+  bottom: 212px;
   width: 75px;
   height: 75px;
   border-radius: 50%;

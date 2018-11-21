@@ -37,8 +37,6 @@ $(document).ready(function () {
     var tableKey = url.searchParams.get("table");
     var player = JSON.parse(localStorage.getItem(playerKey));
     var thisTable = JSON.parse(localStorage.getItem(tableKey));
-    // variable that contains how many points the user has currently on hand
-    var myPoints = 0;
     // card point value array
     var cardPointValues = [{
         'rank': 'joker',
@@ -95,6 +93,8 @@ $(document).ready(function () {
     var middleCard = '';
     // next player username
     var nextPlayer = '';
+    // variable that contains how many points the user has currently on hand
+    var myPoints = 0;
     // function to find index by key value pairs
     function findIndexByKeyValue(array, key, value) {
         for (var i = 0; i < array.length; i++) {
