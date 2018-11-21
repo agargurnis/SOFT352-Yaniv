@@ -54,6 +54,40 @@ router.post('/join', (req, res) => {
         });
 });
 
+// GET api/game/leave
+router.post('/leave', (req, res) => {
+    // Find table by name
+    Table.findOne({
+        name: req.body.tableName
+    }).then(table => {
+        // Check for table
+        if (!table) {
+            return res.status(404).json({
+                success: false
+            });
+        }
+        // get current number of players 
+        currentNr = table.nrOfPlayers;
+        // Check if the table is full
+        if (currentNr > 1) {
+            // update table
+            table.nrOfPlayers = currentNr - 1;
+            // save to db
+            table.save().then(updatedTable => res.json(updatedTable));
+        } else if (currentNr == 1) {
+            table.remove().then(() => {
+                res.json({
+                    success: true
+                });
+            });
+        } else {
+            return res.status(404).json({
+                success: false
+            });
+        }
+    });
+});
+
 // GET api/game
 router.get('/', (req, res) => {
     Table.find()

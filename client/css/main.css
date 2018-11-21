@@ -68,6 +68,10 @@ body {
   margin-bottom: 5px;
 }
 
+.my-turn {
+  background-color: #5cb85c !important;
+}
+
 #chat-box {
   margin: 15px 0 15px 15px;
   padding-top: 1px;
@@ -175,8 +179,26 @@ body {
   padding-top: 5%;
 }
 
-.my-turn {
-  background-color: #5cb85c !important;
+#leave-game {
+  position: relative;
+  right: 29px;
+  bottom: 326px;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background-color: crimson;
+  border: 3px solid #000;
+}
+
+#call-yaniv {
+  position: relative;
+  left: 356px;
+  bottom: 21px;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background-color: #ffc107;
+  border: 3px solid #000;
 }
 
 #player-one {

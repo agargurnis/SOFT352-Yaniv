@@ -14,6 +14,9 @@ $(document).ready(function () {
     var playerTwo = $('#player-two')[0];
     var playerThree = $('#player-three')[0];
     var playerFour = $('#player-four')[0];
+    // query dom for buttons
+    var leaveBtn = $('#leave-game')[0];
+    var callYanivBtn = $('#call-yniv')[0];
     // query dom for player point columns
     var playerOneColumn = $('#player-one-column')[0];
     var playerTwoColumn = $('#player-two-column')[0];
@@ -34,6 +37,8 @@ $(document).ready(function () {
     var tableKey = url.searchParams.get("table");
     var player = JSON.parse(localStorage.getItem(playerKey));
     var thisTable = JSON.parse(localStorage.getItem(tableKey));
+    // variable that contains how many points the user has currently on hand
+    var myPoints = 0;
     // card point value array
     var cardPointValues = [{
         'rank': 'joker',
@@ -78,7 +83,6 @@ $(document).ready(function () {
         'rank': 'king',
         'value': 10
     }]
-
     // create array to seat players correctly for each individual
     var sortedArray = [{}, {}, {}, {}];
     // create array for players and their cards
@@ -199,7 +203,7 @@ $(document).ready(function () {
     }
     // update and display current players points on hand
     function myPointsOnHand(cardArray) {
-        var myPoints = 0;
+        myPoints = 0;
         for (var i = 0; i < cardArray.length; i++) {
             var theCardStr = cardArray[i];
             var theCardRank = theCardStr.substr(0, theCardStr.length - 2)
@@ -208,10 +212,6 @@ $(document).ready(function () {
             myPoints += theCardValue;
         }
         playerOne.innerHTML = '<p>' + myPoints + '<br />points</p>'
-    }
-    // check if array object is empty
-    function isEmpty(obj) {
-        return obj.length === 0;
     }
     // display players in their seats 
     function seatPlayers(playerArray) {
@@ -243,18 +243,22 @@ $(document).ready(function () {
             }
         }
     }
-    // finish your turn
-    function finishMyTurn() {
-        var nextPlayerIndex = 0;
-        for (var i = 0; i < sortedArray.length; i++) {
-            if (sortedArray[i].myTurn == true) {
-                if (i == 3) {
-                    nextPlayerIndex = 0
-                } else {
-                    nextPlayerIndex = i + 1
-                }
+    // check who is next 
+    function checkWhoIsNext(currentPlayer, unsortedPlayerArray) {
+        var currentPlayerIndex = findIndexByKeyValue(unsortedPlayerArray, 'username', currentPlayer);
+        if (unsortedPlayerArray.length == 2) {
+            if (currentPlayerIndex == 0) {
+                return unsortedPlayerArray[1].username
+            } else if (currentPlayerIndex == 1) {
+                return unsortedPlayerArray[0].username
             }
         }
+    }
+    // finish your turn
+    function finishMyTurn() {
+        checkWin();
+        var nextPlayerName = checkWhoIsNext(player['username'], thisTable['players']);
+        var nextPlayerIndex = findIndexByKeyValue(sortedArray, 'username', nextPlayerName);
         nextPlayer = sortedArray[nextPlayerIndex].username;
         startNextTurn(player['username'], nextPlayer);
     }
@@ -277,23 +281,30 @@ $(document).ready(function () {
             if (playerIndex == 0) {
                 sortedArray[0] = unsortedArray[0];
                 sortedArray[1] = unsortedArray[1];
+                sortedArray[2] = {};
+                sortedArray[3] = {};
             } else if (playerIndex == 1) {
                 sortedArray[0] = unsortedArray[1];
                 sortedArray[3] = unsortedArray[0];
+                sortedArray[1] = {};
+                sortedArray[2] = {};
             }
         } else if (unsortedArray.length == 3) {
             if (playerIndex == 0) {
                 sortedArray[0] = unsortedArray[0];
                 sortedArray[1] = unsortedArray[1];
                 sortedArray[2] = unsortedArray[2];
+                sortedArray[3] = {};
             } else if (playerIndex == 1) {
                 sortedArray[0] = unsortedArray[1];
                 sortedArray[3] = unsortedArray[0];
                 sortedArray[1] = unsortedArray[2];
+                sortedArray[2] = {};
             } else if (playerIndex == 2) {
                 sortedArray[0] = unsortedArray[2];
                 sortedArray[3] = unsortedArray[1];
                 sortedArray[2] = unsortedArray[0];
+                sortedArray[1] = {};
             }
         } else if (unsortedArray.length == 4) {
             if (playerIndex == 1) {
@@ -448,12 +459,37 @@ $(document).ready(function () {
             deckFront.css('background-image', 'url("../assets/cards/' + middleCard + '.png")');
         }
     }
+    // update database when someone leaves the table
+    function leaveTable() {
+        var tableData = {
+            "tableName": tableKey
+        }
+        axios
+            .post('/api/game/leave', tableData)
+            .then(response => {
+                socket.emit('leave-table', tableKey);
+                socket.emit('player-left', {
+                    table: tableKey,
+                    player: player
+                })
+                window.location.href = "http://localhost:4000/lobby?name=" + player.username;
+            })
+            .catch(error =>
+                console.log(error)
+            );
+    }
     // do the initial setup for the game
     function setupTable() {
         sortPlayers(thisTable['players']);
     }
-
-    window.onload = setupTable();
+    // check if a player has less than 5 points so he can call Yaniv
+    function checkWin() {
+        if (myPoints <= 5) {
+            callYanivBtn.classList.remove('hidden');
+        } else {
+            callYanivBtn.classList.add('hidden');
+        }
+    }
     // send to everyone the same shuffled deck of cards
     startGameBtn.addEventListener('click', function () {
         shuffleCards(thisTable['cards']);
@@ -495,6 +531,15 @@ $(document).ready(function () {
     // add event listener for when someone starts typing
     gameMessageField.addEventListener('keypress', function () {
         socket.emit('player-typing', player['username']);
+    })
+    // add event listner for bjutton
+    leaveBtn.addEventListener('click', function () {
+        if (thisTable['players'].length > 1) {
+            leaveTable();
+        } else {
+            localStorage.removeItem(tableKey);
+            leaveTable();
+        }
     })
     // synchronize every deck so it has the same card in the pile as well as make sure each person has unique cards
     socket.on('shuffled-deck', function (data) {
@@ -538,16 +583,22 @@ $(document).ready(function () {
         }
         // else add the new player
         thisTable['players'].push(data)
-        // setupTable();
+        sortPlayers(thisTable['players']);
+    })
+    // remove player from each player array
+    socket.on('player-left', function (data) {
+        var playerWhoLeftIndex = findIndexByKeyValue(thisTable['players'], 'username', data.username);
+        thisTable['players'].splice(playerWhoLeftIndex, 1);
+        localStorage.setItem(tableKey, JSON.stringify(thisTable));
         sortPlayers(thisTable['players']);
     })
     // inform players on the table that there a new player has joined
     socket.on('connect', function () {
-        socket.emit('table', tableKey);
+        socket.emit('join-table', tableKey);
         socket.emit('player-joined', {
             table: tableKey,
             player: player
         })
     })
-
+    window.onload = setupTable();
 });

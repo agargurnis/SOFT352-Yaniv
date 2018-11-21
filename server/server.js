@@ -82,12 +82,18 @@ io.on('connection', function (socket) {
     socket.on('card-swapped', function (data) {
         socket.broadcast.emit('card-swapped', data);
     })
-    socket.on('table', function (table) {
+    socket.on('join-table', function (table) {
         socket.join(table);
+    });
+    socket.on('leave-table', function (table) {
+        socket.leave(table);
     });
     // game actions
     socket.on('player-joined', function (data) {
         io.sockets.in(data.table).emit('player-joined', data.player);
-        // socket.broadcast.emit('player-joined', data);
+    })
+    // game actions
+    socket.on('player-left', function (data) {
+        io.sockets.in(data.table).emit('player-left', data.player);
     })
 })
