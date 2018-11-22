@@ -96,4 +96,12 @@ io.on('connection', function (socket) {
     socket.on('player-left', function (data) {
         io.sockets.in(data.table).emit('player-left', data.player);
     })
+    // game actions
+    socket.on('reveal-points', function (data) {
+        io.sockets.in(data).emit('reveal-points', data);
+    })
+    // game actions
+    socket.on('add-points-to-array', function (data) {
+        io.sockets.in(data.table).emit('add-points-to-array', data);
+    })
 })

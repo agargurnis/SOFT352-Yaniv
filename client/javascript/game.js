@@ -16,7 +16,8 @@ $(document).ready(function () {
     var playerFour = $('#player-four')[0];
     // query dom for buttons
     var leaveBtn = $('#leave-game')[0];
-    var callYanivBtn = $('#call-yniv')[0];
+    var callYanivBtn = $('#call-yaniv')[0];
+    var nextRoundBtn = $('#next-round')[0];
     // query dom for player point columns
     var playerOneColumn = $('#player-one-column')[0];
     var playerTwoColumn = $('#player-two-column')[0];
@@ -33,10 +34,11 @@ $(document).ready(function () {
     // retrieve player object from local storage
     var urlString = window.location.href;
     var url = new URL(urlString);
-    var playerKey = url.searchParams.get("name");
-    var tableKey = url.searchParams.get("table");
+    var playerKey = url.searchParams.get('name');
+    var tableKey = url.searchParams.get('table');
     var player = JSON.parse(localStorage.getItem(playerKey));
     var thisTable = JSON.parse(localStorage.getItem(tableKey));
+    var fullDeckOfCards = thisTable['cards'];
     // card point value array
     var cardPointValues = [{
         'rank': 'joker',
@@ -95,6 +97,8 @@ $(document).ready(function () {
     var nextPlayer = '';
     // variable that contains how many points the user has currently on hand
     var myPoints = 0;
+    // variable to know when to update the score board
+    var updateCounter = 0;
     // function to find index by key value pairs
     function findIndexByKeyValue(array, key, value) {
         for (var i = 0; i < array.length; i++) {
@@ -213,6 +217,13 @@ $(document).ready(function () {
         }
         playerOne.innerHTML = '<p>' + myPoints + '<br />points</p>'
     }
+    // display points on the score board
+    function displayScoreBoardPoints(playerArray) {
+        playerOneColumn.innerHTML += playerArray[0].pointsOnHand == null ? '' : '<p><strong>' + playerArray[0].pointsOnHand + '</strong></p>'
+        playerTwoColumn.innerHTML += playerArray[1].pointsOnHand == null ? '' : '<p><strong>' + playerArray[1].pointsOnHand + '</strong></p>'
+        playerThreeColumn.innerHTML += playerArray[2].pointsOnHand == null ? '' : '<p><strong>' + playerArray[2].pointsOnHand + '</strong></p>'
+        playerFourColumn.innerHTML += playerArray[3].pointsOnHand == null ? '' : '<p><strong>' + playerArray[3].pointsOnHand + '</strong></p>'
+    }
     // display players in their seats 
     function seatPlayers(playerArray) {
         playerOneColumn.innerHTML = playerArray[0].username == null ? '' : '<p><strong>' + playerArray[0].username + '</strong></p>'
@@ -250,6 +261,24 @@ $(document).ready(function () {
             if (currentPlayerIndex == 0) {
                 return unsortedPlayerArray[1].username
             } else if (currentPlayerIndex == 1) {
+                return unsortedPlayerArray[0].username
+            }
+        } else if (unsortedPlayerArray.length == 3) {
+            if (currentPlayerIndex == 0) {
+                return unsortedPlayerArray[1].username
+            } else if (currentPlayerIndex == 1) {
+                return unsortedPlayerArray[2].username
+            } else if (currentPlayerIndex == 2) {
+                return unsortedPlayerArray[0].username
+            }
+        } else if (unsortedPlayerArray.length == 4) {
+            if (currentPlayerIndex == 0) {
+                return unsortedPlayerArray[1].username
+            } else if (currentPlayerIndex == 1) {
+                return unsortedPlayerArray[2].username
+            } else if (currentPlayerIndex == 2) {
+                return unsortedPlayerArray[3].username
+            } else if (currentPlayerIndex == 3) {
                 return unsortedPlayerArray[0].username
             }
         }
@@ -375,6 +404,21 @@ $(document).ready(function () {
     function displayMiddleCard() {
         deckFront.css('background-image', 'url("../assets/cards/' + middleCard + '.png")');
     }
+    // unhide all cards on a new round
+    function resetTable() {
+        cardOne[0].classList.remove('hidden');
+        cardOne.css('background-image', 'url("../assets/cards/deck.png")');
+        cardTwo[0].classList.remove('hidden');
+        cardTwo.css('background-image', 'url("../assets/cards/deck.png")');
+        cardThree[0].classList.remove('hidden');
+        cardThree.css('background-image', 'url("../assets/cards/deck.png")');
+        cardFour[0].classList.remove('hidden');
+        cardFour.css('background-image', 'url("../assets/cards/deck.png")');
+        cardFive[0].classList.remove('hidden');
+        cardFive.css('background-image', 'url("../assets/cards/deck.png")');
+        deckFront.css('background-image', 'url("../assets/cards/deck.png")');
+        callYanivBtn.classList.add('hidden');
+    }
     // display players cards on hand
     function displayCardsOnHand(cardArray) {
         if (cardArray.length == 1) {
@@ -484,14 +528,15 @@ $(document).ready(function () {
     }
     // check if a player has less than 5 points so he can call Yaniv
     function checkWin() {
-        if (myPoints <= 5) {
+        if (myPoints <= 20) {
             callYanivBtn.classList.remove('hidden');
         } else {
             callYanivBtn.classList.add('hidden');
         }
     }
-    // send to everyone the same shuffled deck of cards
-    startGameBtn.addEventListener('click', function () {
+    // shuffle and deal cards
+    function dealNewCards() {
+        thisTable['cards'] = fullDeckOfCards;
         shuffleCards(thisTable['cards']);
         dealCards(thisTable['players']);
         socket.emit('shuffled-deck', {
@@ -499,6 +544,29 @@ $(document).ready(function () {
             cards: initialPlayerCards,
             middleCard: middleCard
         });
+    }
+    // something something
+    function revealPoints() {
+        socket.emit('add-points-to-array', {
+            table: tableKey,
+            username: player['username'],
+            pointsOnHand: myPoints
+        })
+    }
+    // call yaniv to indicate that you think you might have won
+    callYanivBtn.addEventListener('click', function () {
+        socket.emit('reveal-points', tableKey);
+        callYanivBtn.classList.add('hidden');
+        nextRoundBtn.classList.remove('hidden');
+    })
+    // send to everyone the same shuffled deck of cards
+    nextRoundBtn.addEventListener('click', function () {
+        dealNewCards();
+        nextRoundBtn.classList.add('hidden');
+    })
+    // send to everyone the same shuffled deck of cards
+    startGameBtn.addEventListener('click', function () {
+        dealNewCards();
         startGameBtn.classList.add('hidden');
     })
     // add event listener for when someone wants to pick up a random card from the deck
@@ -543,6 +611,7 @@ $(document).ready(function () {
     })
     // synchronize every deck so it has the same card in the pile as well as make sure each person has unique cards
     socket.on('shuffled-deck', function (data) {
+        myCurrentCards = [];
         thisTable['cards'] = data.deck;
         middleCard = data.middleCard;
         for (var i = 0; i < data.cards.length; i++) {
@@ -554,6 +623,7 @@ $(document).ready(function () {
         displayDeck();
         displayMiddleCard();
         myPointsOnHand(myCurrentCards);
+
     })
     // update the game middle card and the deck so it is in sync with the rest of the players
     socket.on('card-swapped', function (data) {
@@ -562,6 +632,20 @@ $(document).ready(function () {
         displayMiddleCard();
         updateOthersCardOnHand(data.whoSwapped, data.cardsLeftOnHand);
         startNextTurn(data.whoSwapped, data.nextPlayer);
+    })
+    // request everyone to reveal points and add to score board
+    socket.on('reveal-points', function () {
+        revealPoints();
+    })
+    socket.on('add-points-to-array', function (data) {
+        var indexToUpdate = findIndexByKeyValue(sortedArray, 'username', data.username);
+        sortedArray[indexToUpdate].pointsOnHand = data.pointsOnHand;
+        updateCounter++;
+        if (updateCounter == 4) {
+            displayScoreBoardPoints(sortedArray);
+            resetTable();
+            updateCounter = 0;
+        }
     })
     // update the game chat window with the most recent messages
     socket.on('game-chat', function (data) {

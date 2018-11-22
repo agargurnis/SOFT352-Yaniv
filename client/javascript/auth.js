@@ -3,6 +3,7 @@ class Player {
         this.username = username;
         this.cardsOnHand = new Array();
         this.myTurn = false;
+        this.pointsOnHand = 0;
     }
 }
 // instantiate a temporary player object

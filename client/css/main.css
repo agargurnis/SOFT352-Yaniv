@@ -201,6 +201,17 @@ body {
   border: 3px solid #000;
 }
 
+#next-round {
+  position: relative;
+  left: 356px;
+  bottom: 222px;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background-color: #007bff;
+  border: 3px solid #000;
+}
+
 #player-one {
   position: relative;
   left: 163px;
