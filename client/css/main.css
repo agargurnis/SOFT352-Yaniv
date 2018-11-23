@@ -105,13 +105,13 @@ body {
 #chat-window,
 #game-window {
   background-color: white;
-  height: 88.5vh;
+  height: 83.5vh;
   margin: 15px 25px 15px 25px;
 }
 
 #game-chat-window {
   background-color: white;
-  height: 11.5vh;
+  height: 10.5vh;
   margin: 5px 25px 15px 25px;
 }
 
@@ -192,8 +192,8 @@ body {
 
 #call-yaniv {
   position: relative;
-  left: 356px;
-  bottom: 222px;
+  left: 325px;
+  bottom: 230px;
   width: 75px;
   height: 75px;
   border-radius: 50%;
@@ -203,8 +203,8 @@ body {
 
 #next-round {
   position: relative;
-  left: 356px;
-  bottom: 222px;
+  left: 325px;
+  bottom: 230px;
   width: 75px;
   height: 75px;
   border-radius: 50%;
@@ -214,8 +214,8 @@ body {
 
 #player-one {
   position: relative;
-  left: 163px;
-  top: 353px;
+  left: 150px;
+  top: 325px;
   width: 75px;
   height: 75px;
   border-radius: 50%;
@@ -225,8 +225,8 @@ body {
 
 #player-two {
   position: relative;
-  right: 28px;
-  top: 88px;
+  right: 30px;
+  top: 76px;
   width: 75px;
   height: 75px;
   border-radius: 50%;
@@ -236,8 +236,8 @@ body {
 
 #player-three {
   position: relative;
-  left: 163px;
-  bottom: 175px;
+  left: 150px;
+  bottom: 180px;
   width: 75px;
   height: 75px;
   border-radius: 50%;
@@ -247,8 +247,8 @@ body {
 
 #player-four {
   position: relative;
-  left: 355px;
-  bottom: 62px;
+  left: 325px;
+  bottom: 75px;
   width: 75px;
   height: 75px;
   border-radius: 50%;
@@ -258,10 +258,10 @@ body {
 
 #deck-back {
   position: relative;
-  left: 210px;
+  left: 195px;
   bottom: 325px;
-  width: 75px;
-  height: 100px;
+  width: 65px;
+  height: 90px;
   background-image: url("../assets/cards/deck.png");
   background-size: contain;
   background-repeat: no-repeat;
@@ -270,10 +270,10 @@ body {
 
 #deck-front {
   position: relative;
-  left: 116px;
-  bottom: 225px;
-  width: 75px;
-  height: 100px;
+  left: 110px;
+  bottom: 235px;
+  width: 65px;
+  height: 90px;
   background-image: url("../assets/cards/ace-S.png");
   background-size: contain;
   background-repeat: no-repeat;
@@ -284,8 +284,8 @@ body {
   position: relative;
   padding-top: 20px;
   font-size: 20px;
-  left: 163px;
-  bottom: 212px;
+  left: 149px;
+  bottom: 226px;
   width: 75px;
   height: 75px;
   border-radius: 50%;
@@ -294,8 +294,8 @@ body {
 }
 
 #game-table-square {
-  width: 400px;
-  height: 400px;
+  width: 370px;
+  height: 370px;
   margin: 0 auto;
   background-image: url("../assets/images/table.png");
   background-size: contain;
@@ -306,6 +306,7 @@ body {
 #player-cards {
   width: 500px;
   height: 21%;
+  padding-top: 15px;
   margin: 0 auto;
 }
 

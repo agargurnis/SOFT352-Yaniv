@@ -161,6 +161,8 @@ $(document).ready(function () {
     }
     // card listeners
     function addCardListener() {
+        console.log('added listener');
+
         $('.game-card').each(function () {
             var thisCard = $(this)[0];
             thisCard.addEventListener('click', function () {
@@ -243,17 +245,25 @@ $(document).ready(function () {
         playerFour.innerHTML = playerArray[3].username == null ? '' : '<p>' + playerArray[3].username + '<br />5 cards</p>'
         playerFourColumn.innerHTML = playerArray[3].username == null ? '' : '<p><strong>' + playerArray[3].username + '</strong></p>'
     }
+    // check if its my turn and if so enable card selection
+    function checkIfMyTurn() {
+        for (var i = 0; i < sortedArray.length; i++) {
+            if (sortedArray[i].myTurn == true && sortedArray[i].username == player['username']) {
+                addCardListener();
+            }
+        }
+    }
     // display whos turn is it
     function displayWhosTurn() {
         $('.player').each(function () {
             var thisPlayer = $(this)[0];
             thisPlayer.classList.remove('my-turn');
         })
+
         for (var i = 0; i < sortedArray.length; i++) {
             if (sortedArray[i].myTurn == true) {
                 if (i == 0) {
                     playerOne.classList.add('my-turn')
-                    addCardListener();
                 } else if (i == 1) {
                     playerTwo.classList.add('my-turn')
                 } else if (i == 2) {
@@ -307,6 +317,7 @@ $(document).ready(function () {
         var previousPlayersIndex = findIndexByKeyValue(sortedArray, 'username', previousPlayerUsername);
         sortedArray[previousPlayersIndex].myTurn = false;
         sortedArray[nextPlayersIndex].myTurn = true;
+        checkIfMyTurn();
         displayWhosTurn();
     }
     // sort players array
