@@ -160,25 +160,34 @@ $(document).ready(function () {
         }
     }
     // card listeners
-    $('.game-card').each(function () {
-        var thisCard = $(this)[0];
-        thisCard.addEventListener('click', function () {
-            if ($(this).hasClass('hover') && swapArray.length > 0) {
-                if (checkRank(thisCard.id, swapArray.length)) {
+    function addCardListener() {
+        $('.game-card').each(function () {
+            var thisCard = $(this)[0];
+            thisCard.addEventListener('click', function () {
+                if ($(this).hasClass('hover') && swapArray.length > 0) {
+                    if (checkRank(thisCard.id, swapArray.length)) {
+                        thisCard.classList.add('selected');
+                        thisCard.classList.remove('hover');
+                    }
+                } else if ($(this).hasClass('hover')) {
+                    cardToSwap(thisCard.id);
                     thisCard.classList.add('selected');
                     thisCard.classList.remove('hover');
+                } else if ($(this).hasClass('selected')) {
+                    swapArray.pop();
+                    thisCard.classList.remove('selected');
+                    thisCard.classList.add('hover');
                 }
-            } else if ($(this).hasClass('hover')) {
-                cardToSwap(thisCard.id);
-                thisCard.classList.add('selected');
-                thisCard.classList.remove('hover');
-            } else if ($(this).hasClass('selected')) {
-                swapArray.pop();
-                thisCard.classList.remove('selected');
-                thisCard.classList.add('hover');
-            }
+            })
         })
-    })
+    }
+    // remove card listener
+    function removeCardListener() {
+        $('.game-card').each(function () {
+            var thisCard = $(this);
+            thisCard.replaceWith(thisCard.clone());
+        })
+    }
     // add card indexes that will be swaped to an array
     function cardToSwap(card) {
         if (card == 'card-one') {
@@ -244,6 +253,7 @@ $(document).ready(function () {
             if (sortedArray[i].myTurn == true) {
                 if (i == 0) {
                     playerOne.classList.add('my-turn')
+                    addCardListener();
                 } else if (i == 1) {
                     playerTwo.classList.add('my-turn')
                 } else if (i == 2) {
@@ -473,35 +483,30 @@ $(document).ready(function () {
     }
     // pick up a random card from the deck
     function pickUpRandomCard() {
+        var randomCard = thisTable['cards'].pop();
+        var selectedCardIndex = swapArray[0];
+        swapArray.splice(0, 1);
+        var middleCardArray = myCurrentCards.splice(selectedCardIndex, 1, randomCard);
+        middleCard = middleCardArray[0];
         if (swapArray.length > 0) {
-            var randomCard = thisTable['cards'].pop();
-            var selectedCardIndex = swapArray[0];
-            swapArray.splice(0, 1);
-            var middleCardArray = myCurrentCards.splice(selectedCardIndex, 1, randomCard);
-            middleCard = middleCardArray[0];
-            if (swapArray.length > 0) {
-                discardExtraCards();
-            }
-            displayCardsOnHand(myCurrentCards);
-            myPointsOnHand(myCurrentCards);
-            deckFront.css('background-image', 'url("../assets/cards/' + middleCard + '.png")');
+            discardExtraCards();
         }
-
+        displayCardsOnHand(myCurrentCards);
+        myPointsOnHand(myCurrentCards);
+        deckFront.css('background-image', 'url("../assets/cards/' + middleCard + '.png")');
     }
     // pick up the revealed card from middle
     function pickUpMiddleCard() {
+        var selectedCardIndex = swapArray[0];
+        swapArray.splice(0, 1);
+        var selectedCard = myCurrentCards.splice(selectedCardIndex, 1, middleCard);
+        middleCard = selectedCard[0];
         if (swapArray.length > 0) {
-            var selectedCardIndex = swapArray[0];
-            swapArray.splice(0, 1);
-            var selectedCard = myCurrentCards.splice(selectedCardIndex, 1, middleCard);
-            middleCard = selectedCard[0];
-            if (swapArray.length > 0) {
-                discardExtraCards();
-            }
-            displayCardsOnHand(myCurrentCards);
-            myPointsOnHand(myCurrentCards);
-            deckFront.css('background-image', 'url("../assets/cards/' + middleCard + '.png")');
+            discardExtraCards();
         }
+        displayCardsOnHand(myCurrentCards);
+        myPointsOnHand(myCurrentCards);
+        deckFront.css('background-image', 'url("../assets/cards/' + middleCard + '.png")');
     }
     // update database when someone leaves the table
     function leaveTable() {
@@ -567,34 +572,41 @@ $(document).ready(function () {
     // send to everyone the same shuffled deck of cards
     startGameBtn.addEventListener('click', function () {
         dealNewCards();
+        addCardListener();
         startGameBtn.classList.add('hidden');
     })
     // add event listener for when someone wants to pick up a random card from the deck
     deckBack.addEventListener('click', function () {
-        pickUpRandomCard();
-        unselectAllCards();
-        finishMyTurn();
-        socket.emit('card-swapped', {
-            deck: thisTable['cards'],
-            middleCard: middleCard,
-            whoSwapped: player['username'],
-            cardsLeftOnHand: myCurrentCards.length,
-            nextPlayer: nextPlayer
-        });
+        if (swapArray.length > 0) {
+            pickUpRandomCard();
+            unselectAllCards();
+            removeCardListener();
+            finishMyTurn();
+            socket.emit('card-swapped', {
+                deck: thisTable['cards'],
+                middleCard: middleCard,
+                whoSwapped: player['username'],
+                cardsLeftOnHand: myCurrentCards.length,
+                nextPlayer: nextPlayer
+            });
+        }
+
     })
     // add event listener for when someone wants to pick the revealed middle card
     deckFront[0].addEventListener('click', function () {
-        pickUpMiddleCard();
-        unselectAllCards();
-        finishMyTurn();
-        socket.emit('card-swapped', {
-            deck: thisTable['cards'],
-            middleCard: middleCard,
-            whoSwapped: player['username'],
-            cardsLeftOnHand: myCurrentCards.length,
-            nextPlayer: nextPlayer
-        });
-
+        if (swapArray.length > 0) {
+            pickUpMiddleCard();
+            unselectAllCards();
+            removeCardListener();
+            finishMyTurn();
+            socket.emit('card-swapped', {
+                deck: thisTable['cards'],
+                middleCard: middleCard,
+                whoSwapped: player['username'],
+                cardsLeftOnHand: myCurrentCards.length,
+                nextPlayer: nextPlayer
+            });
+        }
     })
     // add event listener for when someone starts typing
     gameMessageField.addEventListener('keypress', function () {
@@ -623,7 +635,6 @@ $(document).ready(function () {
         displayDeck();
         displayMiddleCard();
         myPointsOnHand(myCurrentCards);
-
     })
     // update the game middle card and the deck so it is in sync with the rest of the players
     socket.on('card-swapped', function (data) {
