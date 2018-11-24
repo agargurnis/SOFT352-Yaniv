@@ -92,6 +92,8 @@ $(document).ready(function () {
     var nextPlayer = '';
     // variable that contains how many points the user has currently on hand
     var myPoints = 0;
+    // variable that show if it is this players turn or not
+    var myTurn = false;
     // variable to know when to update the score board
     var updateCounter = 0;
     // function to find index by key value pairs
@@ -156,8 +158,6 @@ $(document).ready(function () {
     }
     // card listeners
     function addCardListener() {
-        console.log('added listener');
-
         $('.game-card').each(function () {
             var thisCard = $(this)[0];
             thisCard.addEventListener('click', function () {
@@ -225,6 +225,7 @@ $(document).ready(function () {
     }
     // display points on the score board
     function displayScoreBoardPoints(playerArray) {
+
         playerOneColumn.innerHTML += playerArray[0].pointsOnHand == null ? '' : '<p><strong>' + playerArray[0].pointsOnHand + '</strong></p>'
         playerTwoColumn.innerHTML += playerArray[1].pointsOnHand == null ? '' : '<p><strong>' + playerArray[1].pointsOnHand + '</strong></p>'
         playerThreeColumn.innerHTML += playerArray[2].pointsOnHand == null ? '' : '<p><strong>' + playerArray[2].pointsOnHand + '</strong></p>'
@@ -245,6 +246,7 @@ $(document).ready(function () {
         for (var i = 0; i < sortedArray.length; i++) {
             if (sortedArray[i].myTurn == true && sortedArray[i].username == player['username']) {
                 addCardListener();
+                myTurn = true;
             }
         }
     }
@@ -300,6 +302,7 @@ $(document).ready(function () {
     }
     // finish your turn
     function finishMyTurn() {
+        myTurn = false;
         checkWin();
         var nextPlayerName = checkWhoIsNext(player['username'], thisTable['players']);
         var nextPlayerIndex = findIndexByKeyValue(sortedArray, 'username', nextPlayerName);
@@ -434,6 +437,9 @@ $(document).ready(function () {
         $('#card-five')[0].classList.remove('hidden');
         $('#card-five').css('background-image', 'url("../assets/cards/deck.png")');
         $('#deck-front').css('background-image', 'url("../assets/cards/deck.png")');
+        playerTwo.innerHTML = sortedArray[1].username == null ? '' : '<p>' + sortedArray[1].username + '<br />5 cards</p>'
+        playerThree.innerHTML = sortedArray[2].username == null ? '' : '<p>' + sortedArray[2].username + '<br />5 cards</p>'
+        playerFour.innerHTML = sortedArray[3].username == null ? '' : '<p>' + sortedArray[3].username + '<br />5 cards</p>'
         callYanivBtn.classList.add('hidden');
     }
     // display players cards on hand
@@ -567,9 +573,12 @@ $(document).ready(function () {
     }
     // call yaniv to indicate that you think you might have won
     callYanivBtn.addEventListener('click', function () {
-        socket.emit('reveal-points', tableKey);
-        callYanivBtn.classList.add('hidden');
-        nextRoundBtn.classList.remove('hidden');
+        if (myTurn == true) {
+            myPoints = 0;
+            socket.emit('reveal-points', tableKey);
+            callYanivBtn.classList.add('hidden');
+            nextRoundBtn.classList.remove('hidden');
+        }
     })
     // send to everyone the same shuffled deck of cards
     nextRoundBtn.addEventListener('click', function () {
@@ -663,7 +672,7 @@ $(document).ready(function () {
     })
     socket.on('add-points-to-array', function (data) {
         var indexToUpdate = findIndexByKeyValue(sortedArray, 'username', data.username);
-        sortedArray[indexToUpdate].pointsOnHand = data.pointsOnHand;
+        sortedArray[indexToUpdate].pointsOnHand += data.pointsOnHand;
         updateCounter++;
 
         if (thisTable['players'].length == 2 && updateCounter == 2) {
