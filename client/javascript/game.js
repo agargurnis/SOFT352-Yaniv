@@ -24,11 +24,6 @@ $(document).ready(function () {
     var playerThreeColumn = $('#player-three-column')[0];
     var playerFourColumn = $('#player-four-column')[0];
     // query dom cards
-    var cardOne = $('#card-one');
-    var cardTwo = $('#card-two');
-    var cardThree = $('#card-three');
-    var cardFour = $('#card-four');
-    var cardFive = $('#card-five');
     var deckFront = $('#deck-front');
     var deckBack = $('#deck-back')[0];
     // retrieve player object from local storage
@@ -145,7 +140,7 @@ $(document).ready(function () {
             } else {
                 swapArray.pop();
             }
-        } else if (amountOfCards == 38) {
+        } else if (amountOfCards == 3) {
             // second card rank
             cardToSwap(cardId);
             var fourthSelectionIndex = swapArray[3];
@@ -166,7 +161,7 @@ $(document).ready(function () {
         $('.game-card').each(function () {
             var thisCard = $(this)[0];
             thisCard.addEventListener('click', function () {
-                if ($(this).hasClass('hover') && swapArray.length > 0) {
+                if ($(this).hasClass('hover') && swapArray.length > 1) {
                     if (checkRank(thisCard.id, swapArray.length)) {
                         thisCard.classList.add('selected');
                         thisCard.classList.remove('hover');
@@ -382,7 +377,7 @@ $(document).ready(function () {
     }
     // unselect all cards after a swap has been made
     function unselectAllCards() {
-        swapArray = [];
+        swapArray = new Array();
         $('.game-card').each(function () {
             var thisCard = $(this)[0];
             if ($(this).hasClass('selected')) {
@@ -406,6 +401,7 @@ $(document).ready(function () {
         middleCard = thisTable['cards'].pop();
         // deal player cards
         for (var i = 0; i < unsortedPlayerArray.length; i++) {
+            unsortedPlayerArray[i].cardsOnHand = new Array();
             for (var j = 0; j < 5; j++) {
                 var poppedCard = thisTable['cards'].pop();
                 unsortedPlayerArray[i].cardsOnHand.push(poppedCard);
@@ -427,51 +423,51 @@ $(document).ready(function () {
     }
     // unhide all cards on a new round
     function resetTable() {
-        cardOne[0].classList.remove('hidden');
-        cardOne.css('background-image', 'url("../assets/cards/deck.png")');
-        cardTwo[0].classList.remove('hidden');
-        cardTwo.css('background-image', 'url("../assets/cards/deck.png")');
-        cardThree[0].classList.remove('hidden');
-        cardThree.css('background-image', 'url("../assets/cards/deck.png")');
-        cardFour[0].classList.remove('hidden');
-        cardFour.css('background-image', 'url("../assets/cards/deck.png")');
-        cardFive[0].classList.remove('hidden');
-        cardFive.css('background-image', 'url("../assets/cards/deck.png")');
-        deckFront.css('background-image', 'url("../assets/cards/deck.png")');
+        $('#card-one')[0].classList.remove('hidden');
+        $('#card-one').css('background-image', 'url("../assets/cards/deck.png")');
+        $('#card-two')[0].classList.remove('hidden');
+        $('#card-two').css('background-image', 'url("../assets/cards/deck.png")');
+        $('#card-three')[0].classList.remove('hidden');
+        $('#card-three').css('background-image', 'url("../assets/cards/deck.png")');
+        $('#card-four')[0].classList.remove('hidden');
+        $('#card-four').css('background-image', 'url("../assets/cards/deck.png")');
+        $('#card-five')[0].classList.remove('hidden');
+        $('#card-five').css('background-image', 'url("../assets/cards/deck.png")');
+        $('#deck-front').css('background-image', 'url("../assets/cards/deck.png")');
         callYanivBtn.classList.add('hidden');
     }
     // display players cards on hand
     function displayCardsOnHand(cardArray) {
         if (cardArray.length == 1) {
-            cardOne.css('background-image', 'url("../assets/cards/' + cardArray[0] + '.png")');
-            cardTwo[0].classList.add('hidden');
-            cardThree[0].classList.add('hidden');
-            cardFour[0].classList.add('hidden');
-            cardFive[0].classList.add('hidden');
+            $('#card-one').css('background-image', 'url("../assets/cards/' + cardArray[0] + '.png")');
+            $('#card-two')[0].classList.add('hidden');
+            $('#card-three')[0].classList.add('hidden');
+            $('#card-four')[0].classList.add('hidden');
+            $('#card-five')[0].classList.add('hidden');
         } else if (cardArray.length == 2) {
-            cardOne.css('background-image', 'url("../assets/cards/' + cardArray[0] + '.png")');
-            cardTwo.css('background-image', 'url("../assets/cards/' + cardArray[1] + '.png")');
-            cardThree[0].classList.add('hidden');
-            cardFour[0].classList.add('hidden');
-            cardFive[0].classList.add('hidden');
+            $('#card-one').css('background-image', 'url("../assets/cards/' + cardArray[0] + '.png")');
+            $('#card-two').css('background-image', 'url("../assets/cards/' + cardArray[1] + '.png")');
+            $('#card-three')[0].classList.add('hidden');
+            $('#card-four')[0].classList.add('hidden');
+            $('#card-five')[0].classList.add('hidden');
         } else if (cardArray.length == 3) {
-            cardOne.css('background-image', 'url("../assets/cards/' + cardArray[0] + '.png")');
-            cardTwo.css('background-image', 'url("../assets/cards/' + cardArray[1] + '.png")');
-            cardThree.css('background-image', 'url("../assets/cards/' + cardArray[2] + '.png")');
-            cardFour[0].classList.add('hidden');
-            cardFive[0].classList.add('hidden');
+            $('#card-one').css('background-image', 'url("../assets/cards/' + cardArray[0] + '.png")');
+            $('#card-two').css('background-image', 'url("../assets/cards/' + cardArray[1] + '.png")');
+            $('#card-three').css('background-image', 'url("../assets/cards/' + cardArray[2] + '.png")');
+            $('#card-four')[0].classList.add('hidden');
+            $('#card-five')[0].classList.add('hidden');
         } else if (cardArray.length == 4) {
-            cardOne.css('background-image', 'url("../assets/cards/' + cardArray[0] + '.png")');
-            cardTwo.css('background-image', 'url("../assets/cards/' + cardArray[1] + '.png")');
-            cardThree.css('background-image', 'url("../assets/cards/' + cardArray[2] + '.png")');
-            cardFour.css('background-image', 'url("../assets/cards/' + cardArray[3] + '.png")');
-            cardFive[0].classList.add('hidden');
+            $('#card-one').css('background-image', 'url("../assets/cards/' + cardArray[0] + '.png")');
+            $('#card-two').css('background-image', 'url("../assets/cards/' + cardArray[1] + '.png")');
+            $('#card-three').css('background-image', 'url("../assets/cards/' + cardArray[2] + '.png")');
+            $('#card-four').css('background-image', 'url("../assets/cards/' + cardArray[3] + '.png")');
+            $('#card-five')[0].classList.add('hidden');
         } else if (cardArray.length == 5) {
-            cardOne.css('background-image', 'url("../assets/cards/' + cardArray[0] + '.png")');
-            cardTwo.css('background-image', 'url("../assets/cards/' + cardArray[1] + '.png")');
-            cardThree.css('background-image', 'url("../assets/cards/' + cardArray[2] + '.png")');
-            cardFour.css('background-image', 'url("../assets/cards/' + cardArray[3] + '.png")');
-            cardFive.css('background-image', 'url("../assets/cards/' + cardArray[4] + '.png")');
+            $('#card-one').css('background-image', 'url("../assets/cards/' + cardArray[0] + '.png")');
+            $('#card-two').css('background-image', 'url("../assets/cards/' + cardArray[1] + '.png")');
+            $('#card-three').css('background-image', 'url("../assets/cards/' + cardArray[2] + '.png")');
+            $('#card-four').css('background-image', 'url("../assets/cards/' + cardArray[3] + '.png")');
+            $('#card-five').css('background-image', 'url("../assets/cards/' + cardArray[4] + '.png")');
         }
     }
     // get rid of any extra cards if selected 
@@ -634,15 +630,21 @@ $(document).ready(function () {
     })
     // synchronize every deck so it has the same card in the pile as well as make sure each person has unique cards
     socket.on('shuffled-deck', function (data) {
-        myCurrentCards = [];
+        console.log(myCurrentCards);
+        myCurrentCards = new Array();
+        console.log(myCurrentCards);
+
         thisTable['cards'] = data.deck;
         middleCard = data.middleCard;
         for (var i = 0; i < data.cards.length; i++) {
             if (player['username'] == data.cards[i].username) {
                 myCurrentCards = data.cards[i].cardsOnHand;
             }
+            console.log(myCurrentCards);
         }
+        console.log(myCurrentCards);
         displayCardsOnHand(myCurrentCards);
+        console.log(myCurrentCards);
         displayDeck();
         displayMiddleCard();
         myPointsOnHand(myCurrentCards);
@@ -663,7 +665,18 @@ $(document).ready(function () {
         var indexToUpdate = findIndexByKeyValue(sortedArray, 'username', data.username);
         sortedArray[indexToUpdate].pointsOnHand = data.pointsOnHand;
         updateCounter++;
-        if (updateCounter == 4) {
+
+        if (thisTable['players'].length == 2 && updateCounter == 2) {
+            displayScoreBoardPoints(sortedArray);
+            resetTable();
+            updateCounter = 0;
+        }
+        if (thisTable['players'].length == 3 && updateCounter == 3) {
+            displayScoreBoardPoints(sortedArray);
+            resetTable();
+            updateCounter = 0;
+        }
+        if (thisTable['players'].length == 4 && updateCounter == 4) {
             displayScoreBoardPoints(sortedArray);
             resetTable();
             updateCounter = 0;
