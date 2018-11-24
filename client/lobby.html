@@ -7,6 +7,12 @@
     <link href="css/main.css" type="text/css" rel="stylesheet" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
         crossorigin="anonymous" />
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="assets/files/jquery-3.2.1.js"></script>
     <script src="/socket.io/socket.io.js"></script>
@@ -20,6 +26,7 @@
             <div class="col-8">
                 <!-- Chat Window -->
                 <div id="chat-box">
+                    <div id="log-out-btn" class="text-center hover pointer"><strong>Log<br />Out</strong></div>
                     <h3 class="text-center box-title">Public Chat</h3>
                     <div id="chat-window">
                         <div id="chat-output"></div>
@@ -34,6 +41,7 @@
             <div class="col-4">
                 <!-- Game List Window -->
                 <div id="game-box">
+                    <div id="rule-book-btn" class="text-center hover pointer" data-toggle="modal" data-target="#ruleBookModal"><strong>Rule<br />Book</strong></div>
                     <h3 class="text-center box-title">Game Window</h3>
                     <div id="game-window">
                         <div id="game-output"></div>
@@ -42,6 +50,159 @@
                         <button id="create-btn" class="btn-success pointer">
                             Create New Game
                         </button>
+                    </div>
+                    <!-- Modal -->
+                    <div class="modal fade" id="ruleBookModal" tabindex="-1" role="dialog" aria-labelledby="ruleBookModalTitle"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="ruleBookModalLongTitle">How To Play Yaniv</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <h4>Introduction</h4>
+                                    <p>
+                                        This unusual draw and discard game is played in Nepal, where it is known as
+                                        Dhumbal or Jhyap. Under the name Yaniv it has also become popular in Israel in
+                                        the last few years, mostly with younger players, both at home and when
+                                        travelling abroad.
+                                        <br />
+                                        The objective of the game is to have a lower total value of cards in your hand
+                                        than the other players. When you think you have achieved this, you call "Yaniv"
+                                        to stop the play and compare hands. If someone else has an equal or lower
+                                        total, the caller gets a penalty.
+                                        <br />
+                                        Each game is composed of rounds, and each player's total score is updated after
+                                        each round. The goal of the game is to keep your score to a minimum. Players
+                                        with more than 200 points, drop out of the game,
+                                        which is then continued until there is only one player left.
+                                    </p>
+                                    <h4>Players and Cards</h4>
+                                    <p>
+                                        This game can be played by 2 to 4 players. It is said to be best with 4
+                                        players.
+                                        <br />
+                                        A 54 card deck is used - the standard international deck with two jokers.
+                                        <br />
+                                        Each card in the deck has a value: <br />
+                                        &nbsp;&nbsp;Jokers are worth zero.<br />
+                                        &nbsp;&nbsp;Each ace is worth 1. <br />
+                                        &nbsp;&nbsp;Cards 2-10 are worth their face value.<br />
+                                        &nbsp;&nbsp;Pictures (J, Q, K) are worth 10.</p>
+                                    <h4>Deal</h4>
+                                    <p>
+                                        Five cards are dealt to each player, one
+                                        at a time, face down. The remaining cards are placed face down in the
+                                        middle to
+                                        form a drawing stock. The top card of the stock is turned face up and
+                                        placed
+                                        alongside it to start the "Dump Pile".
+                                    </p>
+                                    <h4>Play</h4>
+                                    <p>
+                                        The starting player for the first round is the player who created the
+                                        game. In
+                                        subsequent rounds
+                                        the winner of the previous round starts. The turn to play passes
+                                        clockwise
+                                        around the table.
+
+                                        In your turn you are allowed to do one of two things:
+                                        <br />
+                                        &nbsp;&nbsp;(1) Throw one or more cards from hand to the Dump Pile and
+                                        then
+                                        pick one
+                                        card
+                                        up.
+                                        <br />
+                                        &nbsp;&nbsp;(2) Call "Yaniv" to end the play, if you believe
+                                        that the total value of your cards is less than that of any other
+                                        player. You
+                                        may call "Yaniv" only if the total value of your cards is less than
+                                        6.
+                                        <h5>Throwing and picking up</h5>
+                                        A player can throw either:
+                                        <br />
+                                        &nbsp;&nbsp;(1) Any one card.
+                                        <br />
+                                        &nbsp;&nbsp;(2) One set of two or more cards of the same rank (two 9s,
+                                        three
+                                        Kings,
+                                        etc.).
+                                        <br />
+                                        No matter how many cards you throw, you pick up just one card. The
+                                        cards that
+                                        can be picked up are:
+                                        <br />
+                                        &nbsp;&nbsp;(1) The top card in the Draw pile.
+                                        <br />
+                                        &nbsp;&nbsp;(2) One of the cards thrown to the Dump Pile by the
+                                        previous
+                                        player.
+                                        <br /><br />
+                                        Only one card or one combination set may be thrown in a turn. If
+                                        after drawing a card you are holding for example 3-5-5-9-9 you can
+                                        throw
+                                        either the fives or the nines but not both.
+                                        <br /><br />
+                                        <h5>Ending the play</h5>
+                                        If at the start of your turn you have 5 points or fewer in your hand,
+                                        and you
+                                        think you have the lowest total, you may call "Yaniv". This ends the
+                                        play and
+                                        everyone exposes their cards.
+                                        <br />
+                                        Note that you are not obliged to call when your total is 5 or less. You
+                                        can
+                                        throw and pick up if you wish, and play continues. Also, you cannot
+                                        call other
+                                        than at the beginning of your own turn. If after throwing and picking
+                                        up you
+                                        think you have the lowest total, you must wait for your next turn in
+                                        order to
+                                        end the play.
+                                        <br />
+                                        If the drawing deck is empty and no one has yet ended the play, all the
+                                        cards
+                                        of the dump pile except for the last player's discard are shuffled and
+                                        stacked
+                                        face down to make a new drawing deck.
+                                    </p>
+                                    <h4>Scoring</h4>
+                                    <p>
+                                        The object is to score as few points as possible, and in particular to
+                                        keep
+                                        your cumulative total below 200.
+                                        <br />
+                                        When someone uses their turn to call for end the play, all players
+                                        immediately
+                                        reveal their cards.
+                                        <br />
+                                        If the caller succeeded (had the lowest number of points in their
+                                        cards) - the
+                                        caller scores 0 points, and the other players score however many points
+                                        they
+                                        have in their hands.
+                                        If any other player has the same number of points or fewer points than
+                                        the
+                                        caller, the caller scores 30 penalty points plus whatever they had in
+                                        their
+                                        hand, and the other players score whatever they had in their hands as
+                                        points
+                                        (in this case even the player with the lowest hand scores points).
+                                        <br />
+                                        The player's total scores are kept from round to round. Any player who
+                                        has more
+                                        than 200 points is eliminated from the game, which then continues with
+                                        the
+                                        remaining players, until only one survives.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

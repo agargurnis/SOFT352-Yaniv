@@ -72,6 +72,26 @@ body {
   background-color: #5cb85c !important;
 }
 
+#log-out-btn {
+  position: absolute;
+  background-color: crimson;
+  height: 55px;
+  width: 55px;
+  border-radius: 50%;
+  left: 18px;
+  top: 3px;
+}
+
+#rule-book-btn {
+  position: absolute;
+  background-color: #ffc107;
+  height: 55px;
+  width: 55px;
+  border-radius: 50%;
+  right: 18px;
+  top: 3px;
+}
+
 #chat-box {
   margin: 15px 0 15px 15px;
   padding-top: 1px;
@@ -107,12 +127,14 @@ body {
   background-color: white;
   height: 83.5vh;
   margin: 15px 25px 15px 25px;
+  overflow: auto;
 }
 
 #game-chat-window {
   background-color: white;
   height: 10.5vh;
   margin: 5px 25px 15px 25px;
+  overflow: auto;
 }
 
 #game-table-window {
@@ -125,6 +147,7 @@ body {
   background-color: white;
   height: 91.8vh;
   margin: 5px 25px 15px 25px;
+  overflow: auto;
 }
 
 #message-window,

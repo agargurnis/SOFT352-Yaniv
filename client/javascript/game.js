@@ -107,10 +107,13 @@ $(document).ready(function () {
     }
     // game container listeners
     gameSendBtn.addEventListener('click', function () {
-        socket.emit('game-chat', {
-            message: gameMessageField.value,
-            handle: player['username']
-        });
+        if (gameMessageField.value !== '') {
+            socket.emit('game-chat', {
+                message: gameMessageField.value,
+                handle: player['username']
+            });
+        }
+        gameMessageField.value = '';
     })
     // check if second card chosen to swap is the same rank as the first
     function checkRank(cardId, amountOfCards) {
@@ -624,6 +627,14 @@ $(document).ready(function () {
             });
         }
     })
+    // click the send button on the press of the enter key in message input field
+    gameMessageField.addEventListener("keyup", function (e) {
+        e.preventDefault();
+        // Number 13 is the "Enter" key on the keyboard
+        if (e.keyCode === 13) {
+            gameSendBtn.click();
+        }
+    });
     // add event listener for when someone starts typing
     gameMessageField.addEventListener('keypress', function () {
         socket.emit('player-typing', player['username']);

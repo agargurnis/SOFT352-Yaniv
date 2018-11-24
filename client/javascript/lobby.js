@@ -13,6 +13,7 @@ $(document).ready(function () {
     // query dom buttons
     var sendBtn = $('#send-btn')[0];
     var createBtn = $('#create-btn')[0];
+    var logOutBtn = $('#log-out-btn')[0];
     // query form input fields
     var messageField = $('#message-input')[0];
     // query form output fields
@@ -98,9 +99,19 @@ $(document).ready(function () {
                 console.log(error)
             );
     };
-
-    // load game tables 
-    window.onload = getGames();
+    // log out player and redirect to login screen
+    logOutBtn.addEventListener('click', function () {
+        localStorage.removeItem(playerKey);
+        window.location.href = "http://localhost:4000";
+    })
+    // click the send button on the press of the enter key in message input field
+    messageField.addEventListener("keyup", function (e) {
+        e.preventDefault();
+        // Number 13 is the "Enter" key on the keyboard
+        if (e.keyCode === 13) {
+            sendBtn.click();
+        }
+    });
 
     createBtn.addEventListener('click', function () {
         createGame();
@@ -117,10 +128,13 @@ $(document).ready(function () {
     })
 
     sendBtn.addEventListener('click', function () {
-        socket.emit('lobby-chat', {
-            message: messageField.value,
-            handle: player["username"]
-        });
+        if (messageField.value !== '') {
+            socket.emit('lobby-chat', {
+                message: messageField.value,
+                handle: player["username"]
+            });
+        }
+        messageField.value = '';
     })
 
     messageField.addEventListener('keypress', function () {
@@ -135,5 +149,6 @@ $(document).ready(function () {
     socket.on('typing', function (data) {
         typingDetector.innerHTML = '<p><em>' + data + ' is typing...</em></p>';
     })
-
+    // load game tables 
+    window.onload = getGames();
 });
