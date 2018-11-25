@@ -72,6 +72,11 @@ body {
   background-color: #5cb85c !important;
 }
 
+.invalid {
+  color: red;
+  margin-bottom: 0;
+}
+
 #log-out-btn {
   position: absolute;
   background-color: crimson;

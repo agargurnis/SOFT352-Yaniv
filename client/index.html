@@ -19,10 +19,11 @@
         <!-- Login Form -->
         <div id="login-form" class="welcome pt-5 pb-5">
             <h1>Welcome to the card game Yaniv</h1>
-            <h3 class=" pt-2">Please sign into account to continue</h3>
+            <h3 class="pt-2">Please sign into account to continue</h3>
+            <h6 class="invalid hidden">Username or password is invalid</h6>
             <input id="username-input" class="mt-3" type="text" placeholder="Username" />
             <input id="password-input" class="mt-3" type="password" placeholder="Password" />
-            <button id="login-btn" class="btn-primary pointer" onclick="loginUser()">
+            <button id="login-btn" class="btn-secondary pointer" onclick="loginUser()">
                 Login
             </button>
             <h6 class="off-white pt-2">
@@ -38,7 +39,7 @@
             <h3 class=" pt-2">Please enter your details below to register</h3>
             <input id="username-register-input" class="mt-3" type="text" placeholder="Username" />
             <input id="password-register-input" class="mt-3" type="password" placeholder="Password" />
-            <button id="register-btn" class="btn-danger pointer" onclick="registerUser()">
+            <button id="register-btn" class="btn-secondary pointer" onclick="registerUser()">
                 Register
             </button>
         </div>
