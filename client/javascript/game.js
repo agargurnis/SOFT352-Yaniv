@@ -33,7 +33,7 @@ $(document).ready(function () {
     var tableKey = url.searchParams.get('table');
     var player = JSON.parse(localStorage.getItem(playerKey));
     var thisTable = JSON.parse(localStorage.getItem(tableKey));
-    var fullDeckOfCards = thisTable['cards'];
+    var fullDeckOfCards = ['2-D', '2-C', '2-H', '3-S', '3-D', '3-C', '3-H', '3-S', '4-D', '4-C', '4-H', '4-S', '5-D', '5-C', '5-H', '5-S', '6-D', '6-C', '6-H', '6-S', '7-D', '7-C', '7-H', '7-S', '8-D', '8-C', '8-H', '8-S', '9-D', '9-C', '9-H', '9-S', '10-D', '10-C', '10-H', '10-S', 'jack-D', 'jack-C', 'jack-H', 'jack-S', 'queen-D', 'queen-C', 'queen-H', 'queen-S', 'king-D', 'king-C', 'king-H', 'king-S', 'ace-D', 'ace-C', 'ace-H', 'ace-S', 'joker-R', 'joker-B'];
     // card point value array
     var cardPointValues = [{
         'rank': 'joker',
@@ -92,6 +92,8 @@ $(document).ready(function () {
     var nextPlayer = '';
     // variable that contains how many points the user has currently on hand
     var myPoints = 0;
+    // variable that contains how many points the user has accumulated throughout the game
+    var myTotalPoints = 0;
     // variable that show if it is this players turn or not
     var myTurn = false;
     // variable to know when to update the score board
@@ -229,10 +231,10 @@ $(document).ready(function () {
     // display points on the score board
     function displayScoreBoardPoints(playerArray) {
 
-        playerOneColumn.innerHTML += playerArray[0].pointsOnHand == null ? '' : '<p><strong>' + playerArray[0].pointsOnHand + '</strong></p>'
-        playerTwoColumn.innerHTML += playerArray[1].pointsOnHand == null ? '' : '<p><strong>' + playerArray[1].pointsOnHand + '</strong></p>'
-        playerThreeColumn.innerHTML += playerArray[2].pointsOnHand == null ? '' : '<p><strong>' + playerArray[2].pointsOnHand + '</strong></p>'
-        playerFourColumn.innerHTML += playerArray[3].pointsOnHand == null ? '' : '<p><strong>' + playerArray[3].pointsOnHand + '</strong></p>'
+        playerOneColumn.innerHTML += playerArray[0].totalPoints == null ? '' : '<p><strong>' + playerArray[0].totalPoints + '</strong></p>'
+        playerTwoColumn.innerHTML += playerArray[1].totalPoints == null ? '' : '<p><strong>' + playerArray[1].totalPoints + '</strong></p>'
+        playerThreeColumn.innerHTML += playerArray[2].totalPoints == null ? '' : '<p><strong>' + playerArray[2].totalPoints + '</strong></p>'
+        playerFourColumn.innerHTML += playerArray[3].totalPoints == null ? '' : '<p><strong>' + playerArray[3].totalPoints + '</strong></p>'
     }
     // display players in their seats 
     function seatPlayers(playerArray) {
@@ -557,7 +559,7 @@ $(document).ready(function () {
     }
     // shuffle and deal cards
     function dealNewCards() {
-        thisTable['cards'] = fullDeckOfCards;
+        thisTable['cards'] = Array.from(fullDeckOfCards);
         shuffleCards(thisTable['cards']);
         dealCards(thisTable['players']);
         socket.emit('shuffled-deck', {
@@ -566,7 +568,7 @@ $(document).ready(function () {
             middleCard: middleCard
         });
     }
-    // something something
+    // a function that send every players score to every player so it then can be compared and displayed
     function revealPoints() {
         socket.emit('add-points-to-array', {
             table: tableKey,
@@ -574,10 +576,37 @@ $(document).ready(function () {
             pointsOnHand: myPoints
         })
     }
+    // the function that compares every players score and checks if any other player had a lower score and if so the player who called yaniv gets a penalty
+    function comparePoints(sortedArray) {
+        var compareArray = Array.from(sortedArray);
+        // sort arrray in a ascending order
+        var sortedCompareArray = compareArray.sort(function (a, b) {
+            return a.pointsOnHand - b.pointsOnHand
+        });
+        if (sortedCompareArray[0].myTurn == true) {
+            compareArray[0].totalPoints -= compareArray[0].pointsOnHand;
+            calculateScoreBoardPoints(sortedCompareArray[0]);
+        } else if (sortedCompareArray[1].myTurn == true) {
+            sortedCompareArray[1].totalPoints += 30;
+            calculateScoreBoardPoints(sortedCompareArray[1]);
+        } else if (sortedCompareArray[2].myTurn == true) {
+            sortedCompareArray[2].totalPoints += 30;
+            calculateScoreBoardPoints(sortedCompareArray[2]);
+        } else if (sortedCompareArray[3].myTurn == true) {
+            sortedCompareArray[3].totalPoints += 30;
+            calculateScoreBoardPoints(sortedCompareArray[3]);
+        }
+    }
+    // updates the player array if anyone gets a penalty or not
+    function calculateScoreBoardPoints(player) {
+        var indexToUpdate = findIndexByKeyValue(sortedArray, 'username', player.username);
+        sortedArray[indexToUpdate].totalPoints = player.totalPoints;
+        displayScoreBoardPoints(sortedArray);
+    }
     // call yaniv to indicate that you think you might have won
     callYanivBtn.addEventListener('click', function () {
         if (myTurn == true) {
-            myPoints = 0;
+            // myPoints = 0;
             socket.emit('reveal-points', tableKey);
             callYanivBtn.classList.add('hidden');
             nextRoundBtn.classList.remove('hidden');
@@ -650,21 +679,15 @@ $(document).ready(function () {
     })
     // synchronize every deck so it has the same card in the pile as well as make sure each person has unique cards
     socket.on('shuffled-deck', function (data) {
-        console.log(myCurrentCards);
         myCurrentCards = new Array();
-        console.log(myCurrentCards);
-
         thisTable['cards'] = data.deck;
         middleCard = data.middleCard;
         for (var i = 0; i < data.cards.length; i++) {
             if (player['username'] == data.cards[i].username) {
                 myCurrentCards = data.cards[i].cardsOnHand;
             }
-            console.log(myCurrentCards);
         }
-        console.log(myCurrentCards);
         displayCardsOnHand(myCurrentCards);
-        console.log(myCurrentCards);
         displayDeck();
         displayMiddleCard();
         myPointsOnHand(myCurrentCards);
@@ -683,7 +706,8 @@ $(document).ready(function () {
     })
     socket.on('add-points-to-array', function (data) {
         var indexToUpdate = findIndexByKeyValue(sortedArray, 'username', data.username);
-        sortedArray[indexToUpdate].pointsOnHand += data.pointsOnHand;
+        sortedArray[indexToUpdate].pointsOnHand = data.pointsOnHand;
+        sortedArray[indexToUpdate].totalPoints += data.pointsOnHand;
         updateCounter++;
 
         if (thisTable['players'].length == 2 && updateCounter == 2) {
@@ -697,7 +721,7 @@ $(document).ready(function () {
             updateCounter = 0;
         }
         if (thisTable['players'].length == 4 && updateCounter == 4) {
-            displayScoreBoardPoints(sortedArray);
+            comparePoints(sortedArray);
             resetTable();
             updateCounter = 0;
         }

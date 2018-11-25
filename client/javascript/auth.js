@@ -16,11 +16,15 @@ class Observable {
         if (action == 'enable') {
             this.observers.forEach(observer => (
                 observer.classList.add('btn-primary'),
+                observer.classList.add('pointer'),
+                observer.disabled = false,
                 observer.classList.remove('btn-secondary')
             ));
         } else if (action == 'disable') {
             this.observers.forEach(observer => (
                 observer.classList.remove('btn-primary'),
+                observer.classList.remove('pointer'),
+                observer.disabled = true,
                 observer.classList.add('btn-secondary')
             ));
         }
@@ -32,6 +36,7 @@ class Player {
         this.cardsOnHand = new Array();
         this.myTurn = false;
         this.pointsOnHand = 0;
+        this.totalPoints = 0;
     }
 }
 // instantiate a temporary player object
