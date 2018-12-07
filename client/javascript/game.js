@@ -1,9 +1,6 @@
 $(document).ready(function () {
     // make connection
     var socket = io.connect('http://localhost:4000');
-    // query dom buttons
-    var gameSendBtn = $('#game-send-btn')[0];
-    var startGameBtn = $('#start-game-btn')[0];
     // query dom form input fields
     var gameMessageField = $('#game-message-input')[0];
     // query dom form output fields
@@ -14,8 +11,12 @@ $(document).ready(function () {
     var playerTwo = $('#player-two')[0];
     var playerThree = $('#player-three')[0];
     var playerFour = $('#player-four')[0];
+    var playerWhoWon = $('#who-won')[0];
     // query dom for buttons
+    var gameSendBtn = $('#game-send-btn')[0];
+    var startGameBtn = $('#start-game-btn')[0];
     var leaveBtn = $('#leave-game')[0];
+    var gameOverBtn = $('#leave-game-over')[0];
     var callYanivBtn = $('#call-yaniv')[0];
     var nextRoundBtn = $('#next-round')[0];
     // query dom for player point columns
@@ -86,14 +87,14 @@ $(document).ready(function () {
     var myCurrentCards = new Array();
     // array of cards to be swaped
     var swapArray = new Array();
+    // array of players who did not win
+    var loserArray = new Array();
     // revealed middle card
     var middleCard = '';
     // next player username
     var nextPlayer = '';
     // variable that contains how many points the user has currently on hand
     var myPoints = 0;
-    // variable that contains how many points the user has accumulated throughout the game
-    var myTotalPoints = 0;
     // variable that show if it is this players turn or not
     var myTurn = false;
     // variable to know when to update the score board
@@ -107,16 +108,6 @@ $(document).ready(function () {
         }
         return -1;
     }
-    // game container listeners
-    gameSendBtn.addEventListener('click', function () {
-        if (gameMessageField.value !== '') {
-            socket.emit('game-chat', {
-                message: gameMessageField.value,
-                handle: player['username']
-            });
-        }
-        gameMessageField.value = '';
-    })
     // check if second card chosen to swap is the same rank as the first
     function checkRank(cardId, amountOfCards) {
         // first card rank
@@ -166,7 +157,7 @@ $(document).ready(function () {
         $('.game-card').each(function () {
             var thisCard = $(this)[0];
             thisCard.addEventListener('click', function () {
-                if ($(this).hasClass('hover') && swapArray.length > 1) {
+                if ($(this).hasClass('hover') && swapArray.length > 0) {
                     if (checkRank(thisCard.id, swapArray.length)) {
                         thisCard.classList.add('selected');
                         thisCard.classList.remove('hover');
@@ -583,7 +574,10 @@ $(document).ready(function () {
         var sortedCompareArray = compareArray.sort(function (a, b) {
             return a.pointsOnHand - b.pointsOnHand
         });
-        if (sortedCompareArray[0].myTurn == true) {
+        if (sortedCompareArray[0].myTurn == true && sortedCompareArray[0].pointsOnHand == sortedCompareArray[1].pointsOnHand) {
+            sortedCompareArray[0].totalPoints += 30;
+            calculateScoreBoardPoints(sortedCompareArray[0]);
+        } else if (sortedCompareArray[0].myTurn == true) {
             compareArray[0].totalPoints -= compareArray[0].pointsOnHand;
             calculateScoreBoardPoints(sortedCompareArray[0]);
         } else if (sortedCompareArray[1].myTurn == true) {
@@ -601,8 +595,41 @@ $(document).ready(function () {
     function calculateScoreBoardPoints(player) {
         var indexToUpdate = findIndexByKeyValue(sortedArray, 'username', player.username);
         sortedArray[indexToUpdate].totalPoints = player.totalPoints;
+        checkEndGame(sortedArray);
         displayScoreBoardPoints(sortedArray);
     }
+    // check if any of the players have a score over 200 and announce a winner if there is only one left with less than 200 points
+    function checkEndGame(playerArray) {
+        for (var i = 0; i < playerArray.length; i++) {
+            if (playerArray[i].totalPoints >= 60 && loserArray.length == 0) {
+                loserArray.push(playerArray[i]);
+            } else if (playerArray[i].totalPoints >= 60 && loserArray.some(player => player.username == playerArray[i].username) == false) {
+                loserArray.push(playerArray[i]);
+                console.log(loserArray);
+            }
+        }
+        if (loserArray.length >= 3) {
+            var winningArray = Array.from(playerArray);
+            // sort arrray in a ascending order
+            var sortedWinningArray = winningArray.sort(function (a, b) {
+                return a.totalPoints - b.totalPoints
+            });
+            // hide the table and cards and display who won as well as a button to leave the game
+            $('#the-round-table')[0].classList.add('hidden');
+            $('#player-cards')[0].classList.add('hidden');
+            $('#game-over-box')[0].classList.remove('hidden');
+            playerWhoWon.innerHTML = '<p><strong>' + sortedWinningArray[0].username + '</strong><br/> won the game <br/> thank you for playing </p>'
+        }
+    }
+    // add event listner for the game over button
+    gameOverBtn.addEventListener('click', function () {
+        if (thisTable['players'].length > 1) {
+            leaveTable();
+        } else {
+            localStorage.removeItem(tableKey);
+            leaveTable();
+        }
+    })
     // call yaniv to indicate that you think you might have won
     callYanivBtn.addEventListener('click', function () {
         if (myTurn == true) {
@@ -668,7 +695,17 @@ $(document).ready(function () {
     gameMessageField.addEventListener('keypress', function () {
         socket.emit('player-typing', player['username']);
     })
-    // add event listner for bjutton
+    // game container listeners
+    gameSendBtn.addEventListener('click', function () {
+        if (gameMessageField.value !== '') {
+            socket.emit('game-chat', {
+                message: gameMessageField.value,
+                handle: player['username']
+            });
+        }
+        gameMessageField.value = '';
+    })
+    // add event listner for button
     leaveBtn.addEventListener('click', function () {
         if (thisTable['players'].length > 1) {
             leaveTable();

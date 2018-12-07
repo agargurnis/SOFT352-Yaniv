@@ -77,6 +77,11 @@ body {
   margin-bottom: 0;
 }
 
+.winner-title {
+  padding-top: 200px;
+  padding-bottom: 50px;
+}
+
 #log-out-btn {
   position: absolute;
   background-color: crimson;
@@ -152,7 +157,8 @@ body {
   background-color: white;
   height: 91.8vh;
   margin: 5px 25px 15px 25px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 #message-window,
@@ -211,6 +217,15 @@ body {
   position: relative;
   right: 29px;
   bottom: 326px;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background-color: crimson;
+  border: 3px solid #000;
+}
+
+#leave-game-over {
+  margin: 0 auto;
   width: 75px;
   height: 75px;
   border-radius: 50%;
