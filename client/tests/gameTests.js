@@ -77,7 +77,7 @@ QUnit.test("seat players accordingly around the table", function (assert) {
     assert.equal($('#player-four-column')[0].innerHTML, "<p><strong>test4</strong></p>", "player 4 is in the right place");
 })
 
-QUnit.test("display who's turn is it", function (assert) {
+QUnit.test("display who's turn is it and then finish the players turn and display the next player", function (assert) {
     // check who is next 
     function checkWhoIsNext(currentPlayer, unsortedPlayerArray) {
         var currentPlayerIndex = findIndexByKeyValue(unsortedPlayerArray, 'username', currentPlayer);
@@ -166,4 +166,98 @@ QUnit.test("display who's turn is it", function (assert) {
     assert.notOk($('#player-two').hasClass('my-turn'), 'it is not player 2 turn');
     assert.notOk($('#player-three').hasClass('my-turn'), 'it is not player 3 turn');
     assert.notOk($('#player-four').hasClass('my-turn'), 'it is not player 4 turn');
+})
+
+QUnit.test("shuffle the initial deck so the order of the cards are random", function (assert) {
+    // setup all the necesary function for testing 
+    function shuffleCards(array) {
+        for (var i = array.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+    }
+
+    shuffledDeck = Array.from(table.cards);
+    shuffleCards(shuffledDeck);
+
+    assert.notEqual(shuffledDeck, table.cards, 'the cards have been shuffled successfuly');
+})
+
+QUnit.test("select 2 cards and exchange them with a random card from the middle deck", function (assert) {
+    // setup all the necesary function for testing 
+    function shuffleCards(array) {
+        for (var i = array.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+    }
+
+    shuffledDeck = Array.from(table.cards);
+    shuffleCards(shuffledDeck);
+    // hand out cards 
+    function dealCards(player, shuffledCards) {
+        for (var i = 0; i < 5; i++) {
+            var poppedCard = shuffledCards.pop();
+            player.cardsOnHand.push(poppedCard);
+        }
+    }
+    // get rid of any extra cards if selected 
+    function discardExtraCards(swapArray, myCurrentCards) {
+        // sort arrray in a descending order
+        var sortedSwapArray = swapArray.sort(function (a, b) {
+            return b - a
+        });
+
+        if (sortedSwapArray.length == 1) {
+            myCurrentCards.splice(sortedSwapArray[0], 1);
+        } else if (sortedSwapArray.length == 2) {
+            myCurrentCards.splice(sortedSwapArray[0], 1);
+            myCurrentCards.splice(sortedSwapArray[1], 1);
+        } else if (sortedSwapArray.length == 3) {
+            myCurrentCards.splice(sortedSwapArray[0], 1);
+            myCurrentCards.splice(sortedSwapArray[1], 1);
+            myCurrentCards.splice(sortedSwapArray[2], 1);
+        }
+    }
+    // pick up a random card from the deck
+    function pickUpRandomCard(swapArray, myCurrentCards) {
+        var randomCard = shuffledDeck.pop();
+        var selectedCardIndex = swapArray[0];
+        swapArray.splice(0, 1);
+        var middleCardArray = myCurrentCards.splice(selectedCardIndex, 1, randomCard);
+        middleCard = middleCardArray[0];
+        if (swapArray.length > 0) {
+            discardExtraCards(swapArray, myCurrentCards);
+        }
+    }
+
+    assert.equal(player1.cardsOnHand.length, 0, 'player 1 has no cards on his hand');
+
+    dealCards(player1, shuffledDeck);
+    assert.step("player 1 gets dealt cards");
+
+    assert.equal(player1.cardsOnHand.length, 5, 'player 1 has 5 cards on his hand');
+
+    assert.step("select 2 cards out of the players hands");
+
+    var swapArray = new Array();
+    swapArray.push(player1.cardsOnHand[4]);
+    swapArray.push(player1.cardsOnHand[5]);
+
+    assert.step("select a random card from the table and discard the 2 selected cards");
+
+    pickUpRandomCard(swapArray, player1.cardsOnHand);
+
+    assert.equal(player1.cardsOnHand.length, 4, 'player 1 has 4 cards on his hand now');
+
+    for (var i = 0; i < 4; i++) {
+        assert.notEqual(swapArray[0], player1.cardsOnHand[i], 'no cards match up with the discarded card one');
+    }
+    for (var i = 0; i < 4; i++) {
+        assert.notEqual(swapArray[1], player1.cardsOnHand[i], 'no cards match up with the discarded card two');
+    }
 })

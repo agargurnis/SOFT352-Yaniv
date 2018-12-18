@@ -296,13 +296,13 @@ $(document).ready(function () {
         }
     }
     // finish your turn
-    function finishMyTurn() {
+    function finishMyTurn(currentPlayer) {
         myTurn = false;
         checkWin();
-        var nextPlayerName = checkWhoIsNext(player['username'], thisTable['players']);
+        var nextPlayerName = checkWhoIsNext(currentPlayer, thisTable['players']);
         var nextPlayerIndex = findIndexByKeyValue(sortedArray, 'username', nextPlayerName);
         nextPlayer = sortedArray[nextPlayerIndex].username;
-        startNextTurn(player['username'], nextPlayer);
+        startNextTurn(currentPlayer, nextPlayer);
     }
     // start next players turn
     function startNextTurn(previousPlayerUsername, nextPlayerUsername) {
@@ -655,7 +655,7 @@ $(document).ready(function () {
             pickUpRandomCard();
             unselectAllCards();
             removeCardListener();
-            finishMyTurn();
+            finishMyTurn(player['username']);
             socket.emit('card-swapped', {
                 deck: thisTable['cards'],
                 middleCard: middleCard,
@@ -672,7 +672,7 @@ $(document).ready(function () {
             pickUpMiddleCard();
             unselectAllCards();
             removeCardListener();
-            finishMyTurn();
+            finishMyTurn(player['username']);
             socket.emit('card-swapped', {
                 deck: thisTable['cards'],
                 middleCard: middleCard,
