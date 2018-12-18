@@ -12,7 +12,7 @@ router.post('/register', (req, res) => {
     }).then(user => {
         if (user) {
             return res.status(400).json({
-                success: false
+                status: 'username already exists'
             });
         } else {
             const newUser = new User({
@@ -21,7 +21,9 @@ router.post('/register', (req, res) => {
             });
 
             newUser.save()
-                .then(user => res.json(user))
+                .then(user => res.json({
+                    status: 'new user created: ' + user.username
+                }))
                 .catch(err => console.log(err));
         }
     });
@@ -39,17 +41,17 @@ router.post('/login', (req, res) => {
         // Check for user
         if (!user) {
             return res.status(404).json({
-                success: false
+                status: 'user not found'
             });
         }
 
         if (user.password === password) {
             return res.status(200).json({
-                success: true
+                status: 'successful authorisation'
             });
         } else {
             return res.status(404).json({
-                success: false
+                status: 'unsuccessful authorisation'
             });
         }
     });

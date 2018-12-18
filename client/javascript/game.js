@@ -221,7 +221,6 @@ $(document).ready(function () {
     }
     // display points on the score board
     function displayScoreBoardPoints(playerArray) {
-
         playerOneColumn.innerHTML += playerArray[0].totalPoints == null ? '' : '<p><strong>' + playerArray[0].totalPoints + '</strong></p>'
         playerTwoColumn.innerHTML += playerArray[1].totalPoints == null ? '' : '<p><strong>' + playerArray[1].totalPoints + '</strong></p>'
         playerThreeColumn.innerHTML += playerArray[2].totalPoints == null ? '' : '<p><strong>' + playerArray[2].totalPoints + '</strong></p>'

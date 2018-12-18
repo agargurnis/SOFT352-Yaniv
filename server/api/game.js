@@ -12,7 +12,7 @@ router.post('/create', (req, res) => {
     }).then(table => {
         if (table) {
             return res.status(400).json({
-                success: false
+                status: 'table for this user already exists'
             });
         } else {
             const newTable = new Table({
@@ -35,7 +35,7 @@ router.post('/join', (req, res) => {
             // Check for table
             if (!table) {
                 return res.status(404).json({
-                    success: false
+                    status: 'table not found'
                 });
             }
             // get current number of players 
@@ -48,7 +48,7 @@ router.post('/join', (req, res) => {
                 table.save().then(updatedTable => res.json(updatedTable));
             } else {
                 return res.status(404).json({
-                    success: false
+                    status: 'table is full'
                 });
             }
         });
@@ -63,7 +63,7 @@ router.post('/leave', (req, res) => {
         // Check for table
         if (!table) {
             return res.status(404).json({
-                success: false
+                status: 'table not found'
             });
         }
         // get current number of players 
@@ -77,12 +77,12 @@ router.post('/leave', (req, res) => {
         } else if (currentNr == 1) {
             table.remove().then(() => {
                 res.json({
-                    success: true
+                    status: 'successfuly left the table'
                 });
             });
         } else {
             return res.status(404).json({
-                success: false
+                status: 'leaving the table was unsuccessful'
             });
         }
     });
@@ -94,13 +94,13 @@ router.get('/', (req, res) => {
         .then(games => {
             if (!games) {
                 return res.status(404).json({
-                    success: false
+                    status: 'no tables found'
                 });
             }
             res.json(games);
         })
         .catch(error => res.status(404).json({
-            games: 'No games found'
+            status: 'no tables found'
         }));
 });
 
