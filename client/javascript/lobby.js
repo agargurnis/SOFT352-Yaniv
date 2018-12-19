@@ -35,13 +35,17 @@ $(document).ready(function () {
             .post('/api/game/create', tableData)
             .then(response => {
                 table["players"].push(player);
-                localStorage.setItem(player.username + '-table', JSON.stringify(table));
+                localStorage.setItem(tableData.name, JSON.stringify(table));
                 socket.emit('game-created', player["username"]);
-                window.location.href = "http://localhost:4000/game?table=" + player["username"] + "-table&name=" + player["username"];
+                window.location.href = "http://localhost:4000/game?table=" + tableData.name + "&name=" + player["username"];
             })
-            .catch(error =>
-                console.log(error)
-            );
+            .catch(error => {
+                if (error == 'Error: Request failed with status code 400') {
+                    if (window.confirm('It looks like you already have created a game! Are you sure you want to delete your old game and create a new one?')) {
+                        deleteGame(tableData);
+                    }
+                }
+            });
     }
     // joins an already created game
     function joinGame(tableId, tableName) {
@@ -73,6 +77,17 @@ $(document).ready(function () {
                 console.log(error)
             );
     };
+    // delete the table from database
+    function deleteGame(tableData) {
+        axios
+            .post('/api/game/delete', tableData)
+            .then(response => {
+                createGame();
+            })
+            .catch(error =>
+                console.log(error)
+            );
+    }
     // sets the buttons to join available games
     function setGameButtons() {
         $('.game-button').each(function () {

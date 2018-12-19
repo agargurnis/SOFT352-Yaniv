@@ -22,7 +22,7 @@ router.post('/create', (req, res) => {
             });
 
             newTable.save()
-                .then(user => res.json(user))
+                .then(table => res.json(table))
                 .catch(err => console.log(err));
         }
     });
@@ -74,11 +74,13 @@ router.post('/leave', (req, res) => {
             // update table
             table.nrOfPlayers = currentNr - 1;
             // save to db
-            table.save().then(updatedTable => res.json(updatedTable));
+            table.save().then(updatedTable => res.json({
+                status: 'successfuly left the table'
+            }));
         } else if (currentNr == 1) {
             table.remove().then(() => {
                 res.json({
-                    status: 'successfuly left the table'
+                    status: 'successfuly deleted the table'
                 });
             });
         } else {
@@ -89,7 +91,31 @@ router.post('/leave', (req, res) => {
     });
 });
 
-// Post api/game/start
+// DELETE api/game/delete
+router.post('/delete', (req, res) => {
+    // Find table by name
+    Table.findOne({
+            name: req.body.name
+        }).then(table => {
+            // Check for table
+            if (!table) {
+                return res.status(404).json({
+                    status: 'table not found'
+                });
+            }
+            // delete table from database
+            table.remove().then(() => {
+                res.json({
+                    status: 'successfuly deleted the table'
+                });
+            });
+        })
+        .catch(error => res.status(404).json({
+            status: 'no tables found'
+        }));
+});
+
+// POST api/game/start
 router.post('/start', (req, res) => {
     // Find table by name
     Table.findOne({
