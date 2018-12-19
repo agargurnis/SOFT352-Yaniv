@@ -491,6 +491,13 @@ $(document).ready(function () {
     }
     // pick up a random card from the deck
     function pickUpRandomCard() {
+        // check if there is any cards left on the table
+        if (thisTable['cards'].length == 0) {
+            // if not then place a new shuffled deck on the table
+            thisTable['cards'] = Array.from(fullDeckOfCards);
+            shuffleCards(thisTable['cards']);
+            // and continue as usual
+        }
         var randomCard = thisTable['cards'].pop();
         var selectedCardIndex = swapArray[0];
         swapArray.splice(0, 1);
