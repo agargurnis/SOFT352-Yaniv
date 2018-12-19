@@ -4,7 +4,7 @@ const table = {
     players: new Array()
 }
 const player1 = {
-    username: "test1",
+    username: "player1",
     cardsOnHand: new Array(),
     myTurn: false,
     pointsOnHand: 0,
@@ -12,7 +12,7 @@ const player1 = {
 }
 table.players.push(player1);
 const player2 = {
-    username: "test2",
+    username: "player2",
     cardsOnHand: new Array(),
     myTurn: false,
     pointsOnHand: 0,
@@ -20,7 +20,7 @@ const player2 = {
 }
 table.players.push(player2);
 const player3 = {
-    username: "test3",
+    username: "player3",
     cardsOnHand: new Array(),
     myTurn: true,
     pointsOnHand: 0,
@@ -28,7 +28,7 @@ const player3 = {
 }
 table.players.push(player3);
 const player4 = {
-    username: "test4",
+    username: "player4",
     cardsOnHand: new Array(),
     myTurn: false,
     pointsOnHand: 0,
@@ -60,21 +60,22 @@ function findIndexByKeyValue(array, key, value) {
 QUnit.test("seat players accordingly around the table", function (assert) {
     // setup the function to test
     function seatPlayers(playerArray) {
+        $('#player-one')[0].innerHTML = playerArray[0].username == null ? '' : '<p>' + playerArray[0].username + '<br /></p>'
         $('#player-one-column')[0].innerHTML = playerArray[0].username == null ? '' : '<p><strong>' + playerArray[0].username + '</strong></p>'
-        $('#player-two').innerHTML = playerArray[1].username == null ? '' : '<p>' + playerArray[1].username + '<br />5 cards</p>'
+        $('#player-two')[0].innerHTML = playerArray[1].username == null ? '' : '<p>' + playerArray[1].username + '<br />5 cards</p>'
         $('#player-two-column')[0].innerHTML = playerArray[1].username == null ? '' : '<p><strong>' + playerArray[1].username + '</strong></p>'
-        $('#player-three').innerHTML = playerArray[2].username == null ? '' : '<p>' + playerArray[2].username + '<br />5 cards</p>'
+        $('#player-three')[0].innerHTML = playerArray[2].username == null ? '' : '<p>' + playerArray[2].username + '<br />5 cards</p>'
         $('#player-three-column')[0].innerHTML = playerArray[2].username == null ? '' : '<p><strong>' + playerArray[2].username + '</strong></p>'
-        $('#player-four').innerHTML = playerArray[3].username == null ? '' : '<p>' + playerArray[3].username + '<br />5 cards</p>'
+        $('#player-four')[0].innerHTML = playerArray[3].username == null ? '' : '<p>' + playerArray[3].username + '<br />5 cards</p>'
         $('#player-four-column')[0].innerHTML = playerArray[3].username == null ? '' : '<p><strong>' + playerArray[3].username + '</strong></p>'
     }
 
     seatPlayers(table.players);
 
-    assert.equal($('#player-one-column')[0].innerHTML, "<p><strong>test1</strong></p>", "player 1 is in the right place");
-    assert.equal($('#player-two-column')[0].innerHTML, "<p><strong>test2</strong></p>", "player 2 is in the right place");
-    assert.equal($('#player-three-column')[0].innerHTML, "<p><strong>test3</strong></p>", "player 3 is in the right place");
-    assert.equal($('#player-four-column')[0].innerHTML, "<p><strong>test4</strong></p>", "player 4 is in the right place");
+    assert.equal($('#player-one-column')[0].innerHTML, "<p><strong>player1</strong></p>", "player 1 is in the right place");
+    assert.equal($('#player-two-column')[0].innerHTML, "<p><strong>player2</strong></p>", "player 2 is in the right place");
+    assert.equal($('#player-three-column')[0].innerHTML, "<p><strong>player3</strong></p>", "player 3 is in the right place");
+    assert.equal($('#player-four-column')[0].innerHTML, "<p><strong>player4</strong></p>", "player 4 is in the right place");
 })
 
 QUnit.test("display who's turn is it and then finish the players turn and display the next player", function (assert) {
@@ -151,7 +152,7 @@ QUnit.test("display who's turn is it and then finish the players turn and displa
     assert.ok($('#player-three').hasClass('my-turn'), 'it is player 3 turn');
     assert.notOk($('#player-four').hasClass('my-turn'), 'it is not player 4 turn');
 
-    finishMyTurn('test3');
+    finishMyTurn('player3');
     assert.step('player 3 finished their turn')
 
     assert.notOk($('#player-one').hasClass('my-turn'), 'it is not player 1 turn');
@@ -159,7 +160,7 @@ QUnit.test("display who's turn is it and then finish the players turn and displa
     assert.notOk($('#player-three').hasClass('my-turn'), 'it is not player 3 turn');
     assert.ok($('#player-four').hasClass('my-turn'), 'it is player 4 turn');
 
-    finishMyTurn('test4');
+    finishMyTurn('player4');
     assert.step('player 4 finished their turn')
 
     assert.ok($('#player-one').hasClass('my-turn'), 'it is player 1 turn');

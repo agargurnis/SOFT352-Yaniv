@@ -25,7 +25,7 @@ $(document).ready(function () {
     var url = new URL(urlString);
     var playerKey = url.searchParams.get("name");
     var player = JSON.parse(localStorage.getItem(playerKey));
-
+    // creates a new game and save it to the database
     function createGame() {
         var tableData = {
             "name": player["username"] + "-table",
@@ -43,7 +43,7 @@ $(document).ready(function () {
                 console.log(error)
             );
     }
-
+    // joins an already created game
     function joinGame(tableId, tableName) {
         // var gameKey = url.searchParams.get("table");
         var gameTable = JSON.parse(localStorage.getItem(tableName));
@@ -73,7 +73,7 @@ $(document).ready(function () {
                 console.log(error)
             );
     };
-
+    // sets the buttons to join available games
     function setGameButtons() {
         $('.game-button').each(function () {
             var tableName = $(this)[0].firstChild.textContent;
@@ -84,7 +84,7 @@ $(document).ready(function () {
             })
         })
     }
-
+    // displays available games to join
     function getGames() {
         axios
             .get('/api/game')
@@ -105,28 +105,18 @@ $(document).ready(function () {
         window.location.href = "http://localhost:4000";
     })
     // click the send button on the press of the enter key in message input field
-    messageField.addEventListener("keyup", function (e) {
+    messageField.addEventListener('keyup', function (e) {
         e.preventDefault();
         // Number 13 is the "Enter" key on the keyboard
         if (e.keyCode === 13) {
             sendBtn.click();
         }
     });
-
+    // creates a new game when button is pressed
     createBtn.addEventListener('click', function () {
         createGame();
     })
-
-    socket.on('game-created', function (data) {
-        chatOutput.innerHTML += '<p>' + data + '</p>';
-        getGames();
-    })
-
-    socket.on('game-joined', function (data) {
-        chatOutput.innerHTML += '<p>' + data + '</p>';
-        getGames();
-    })
-
+    // sends a message to the public chat
     sendBtn.addEventListener('click', function () {
         if (messageField.value !== '') {
             socket.emit('lobby-chat', {
@@ -136,16 +126,26 @@ $(document).ready(function () {
         }
         messageField.value = '';
     })
-
+    // notifies other players that someone is typing
     messageField.addEventListener('keypress', function () {
         socket.emit('typing', player["username"]);
     })
-
+    // notifies other players that a game is created
+    socket.on('game-created', function (data) {
+        chatOutput.innerHTML += '<p>' + data + '</p>';
+        getGames();
+    })
+    // notifies other players that a game is joined
+    socket.on('game-joined', function (data) {
+        chatOutput.innerHTML += '<p>' + data + '</p>';
+        getGames();
+    })
+    // displays messages in the public chat to all the players
     socket.on('lobby-chat', function (data) {
         typingDetector.innerHTML = '';
         chatOutput.innerHTML += '<p><strong>' + data.handle + ': </strong>' + data.message + '</p>';
     })
-
+    // displays to other players that someone is typing
     socket.on('typing', function (data) {
         typingDetector.innerHTML = '<p><em>' + data + ' is typing...</em></p>';
     })

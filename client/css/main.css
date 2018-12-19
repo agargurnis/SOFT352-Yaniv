@@ -72,7 +72,8 @@
   background-color: #5cb85c !important;
 }
 
-.invalid {
+.invalid-login,
+.invalid-registration {
   color: red;
   margin-bottom: 0;
 }

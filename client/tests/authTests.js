@@ -6,8 +6,8 @@ QUnit.test("click to register button hides the login screen and presents the reg
 	// trigger register form button to switch between login and register
 	registerFormBtn.trigger('click');
 	// test if the button changed between the login screen and register screen
-	assert.ok(loginForm.hasClass('hidden'), true, "It has the class");
-	assert.notOk(registerForm.hasClass('hidden'), true, "It does not have the class");
+	assert.ok(loginForm.hasClass('hidden'), "Login form is hidden");
+	assert.notOk(registerForm.hasClass('hidden'), "Register form is visible");
 	// set the pages state back to how it was
 	registerForm[0].classList.add('hidden');
 	loginForm[0].classList.remove('hidden');
@@ -28,8 +28,9 @@ QUnit.test("the register user button is not enabled until the username and passw
 	registerFormBtn.trigger('click');
 	// trigger register user buttpm to check if its disabled whilst the username and password field is empty
 	registerUserBtn.trigger('click');
+	assert.step("both input fields are empty");
 	// test if it is disabled
-	assert.ok(registerUserBtn.is(':disabled'), true, "It is disabled");
+	assert.ok(registerUserBtn.is(':disabled'), "Register user button is disabled");
 	// enter a value only in the username field
 	usernameRegisterInput.value = 'test';
 	passwordRegisterInput.value = '';
@@ -39,8 +40,9 @@ QUnit.test("the register user button is not enabled until the username and passw
 	} else {
 		fieldObserver.notify('disable');
 	}
+	assert.step("password input field is empty");
 	// test if it is still disabled because the password field is still empty
-	assert.ok(registerUserBtn.is(':disabled'), true, "It is disabled");
+	assert.ok(registerUserBtn.is(':disabled'), "Register user button is disabled");
 	// enter a value only in the password field
 	passwordRegisterInput.value = 'test';
 	usernameRegisterInput.value = '';
@@ -50,8 +52,9 @@ QUnit.test("the register user button is not enabled until the username and passw
 	} else {
 		fieldObserver.notify('disable');
 	}
+	assert.step("username input field is empty");
 	// test if it is still disabled because the username field is still empty
-	assert.ok(registerUserBtn.is(':disabled'), true, "It is disabled");
+	assert.ok(registerUserBtn.is(':disabled'), "Register user button is disabled");
 	// enter a values in the username and password field
 	passwordRegisterInput.value = 'test';
 	usernameRegisterInput.value = 'test';
@@ -61,8 +64,9 @@ QUnit.test("the register user button is not enabled until the username and passw
 	} else {
 		fieldObserver.notify('disable');
 	}
+	assert.step("both input fields have values now");
 	// test if it is enabled because the username and password field now both have values in them
-	assert.ok(registerUserBtn.is(':enabled'), true, "It is enabled");
+	assert.ok(registerUserBtn.is(':enabled'), "Register user button is enabled");
 	// set the pages state back to how it was
 	usernameRegisterInput.value = '';
 	passwordRegisterInput.value = '';
@@ -70,9 +74,17 @@ QUnit.test("the register user button is not enabled until the username and passw
 	loginForm[0].classList.remove('hidden');
 })
 
-// QUnit.test("upon entering a username and a password the register button hides the registration form and presents the login screen", function (assert) {
-// 	var registerUserBtn = $('#register-btn');
-// 	var registerForm = $('#register-form');
-// 	registerUserBtn.trigger('click');
-// 	assert.ok(registerForm.hasClass('hidden'), true, "It has the class!");
-// })
+QUnit.test("upon entering a username and a password the register button hides the registration form and presents the login screen once again", function (assert) {
+	// setup all the necesary variables
+	var registerUserBtn = $('#register-btn');
+	var registerForm = $('#register-form');
+	var loginForm = $('#login-form');
+	// trigger register form button to switch between login and register
+	registerUserBtn.trigger('click');
+	// test if the button changed between the login screen and register screen
+	assert.ok(registerForm.hasClass('hidden'), "Register form is hidden");
+	assert.notOk(loginForm.hasClass('hidden'), "Login form is visible");
+	// set the pages state back to how it was
+	registerForm[0].classList.add('hidden');
+	loginForm[0].classList.remove('hidden');
+})

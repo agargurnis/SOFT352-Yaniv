@@ -46,7 +46,8 @@ $(document).ready(function () {
     // instantiate new Observer class
     const fieldObserver = new Observable();
     // query dom for validation field
-    var validationField = $('.invalid')[0];
+    var loginValidationField = $('.invalid-login')[0];
+    var registeralidationField = $('.invalid-registration')[0];
     // query dom containers
     var loginForm = $('#login-form')[0];
     var registerForm = $('#register-form')[0];
@@ -133,8 +134,14 @@ $(document).ready(function () {
         window.location.href = "http://localhost:4000/lobby?name=" + player.username;
     }
     // unsuccessful login function
-    function invalidCredentials() {
-        validationField.classList.remove('hidden');
+    function invalidLoginCredentials() {
+        loginValidationField.classList.remove('hidden');
+    }
+    // unsuccessful register function
+    function invalidRegisterCredentials() {
+        registeralidationField.classList.remove('hidden');
+        registerForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
     }
     // Register 
     registerUser = () => {
@@ -152,9 +159,10 @@ $(document).ready(function () {
                         fieldObserver.notify('disable');
                     }
                 })
-                .catch(error =>
+                .catch(error => {
+                    invalidRegisterCredentials();
                     console.log(error)
-                );
+                });
         }
     };
     // Login
@@ -172,7 +180,7 @@ $(document).ready(function () {
                     }
                 })
                 .catch(error => {
-                    invalidCredentials();
+                    invalidLoginCredentials();
                     console.log(error);
                 });
         }
