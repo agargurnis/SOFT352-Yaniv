@@ -542,6 +542,20 @@ $(document).ready(function () {
                 console.log(error)
             );
     }
+    // update database when the game is started
+    function startGame() {
+        var tableData = {
+            "tableName": tableKey
+        }
+        axios
+            .post('/api/game/start', tableData)
+            .then(response => {
+                socket.emit('game-started', tableKey);
+            })
+            .catch(error =>
+                console.log(error)
+            );
+    }
     // do the initial setup for the game
     function setupTable() {
         sortPlayers(thisTable['players']);
@@ -652,6 +666,7 @@ $(document).ready(function () {
     })
     // send to everyone the same shuffled deck of cards
     startGameBtn.addEventListener('click', function () {
+        startGame();
         dealNewCards();
         addCardListener();
         startGameBtn.classList.add('hidden');

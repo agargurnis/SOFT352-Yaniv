@@ -36,7 +36,7 @@ $(document).ready(function () {
             .then(response => {
                 table["players"].push(player);
                 localStorage.setItem(player.username + '-table', JSON.stringify(table));
-                socket.emit('game-created', "A new game has been created");
+                socket.emit('game-created', player["username"]);
                 window.location.href = "http://localhost:4000/game?table=" + player["username"] + "-table&name=" + player["username"];
             })
             .catch(error =>
@@ -66,7 +66,7 @@ $(document).ready(function () {
             .then(response => {
                 gameTable["players"].push(player);
                 localStorage.setItem(tableName, JSON.stringify(gameTable));
-                socket.emit('game-joined', "A game has been joined");
+                socket.emit('game-joined', tableName);
                 window.location.href = "http://localhost:4000/game?table=" + tableName + "&name=" + player["username"];
             })
             .catch(error =>
@@ -91,7 +91,9 @@ $(document).ready(function () {
             .then(response => {
                 gameOutput.innerHTML = '';
                 response.data.map(table => {
-                    gameOutput.innerHTML += '<p id="' + table._id + '" class="game-button pointer"><strong class="game-table-name">' + table.name + '</strong><br/>Players: ' + table.nrOfPlayers + '/4</p>';
+                    if (table.started !== true) {
+                        gameOutput.innerHTML += '<p id="' + table._id + '" class="game-button pointer"><strong class="game-table-name">' + table.name + '</strong><br/>Players: ' + table.nrOfPlayers + '/4</p>';
+                    }
                 });
                 setGameButtons();
             })
@@ -132,18 +134,23 @@ $(document).ready(function () {
     })
     // notifies other players that a game is created
     socket.on('game-created', function (data) {
-        chatOutput.innerHTML += '<p>' + data + '</p>';
+        chatOutput.innerHTML += '<p><strong>' + data + '</strong> created a game</p>';
         getGames();
     })
     // notifies other players that a game is joined
     socket.on('game-joined', function (data) {
-        chatOutput.innerHTML += '<p>' + data + '</p>';
+        chatOutput.innerHTML += '<p><strong>' + data + '</strong> has been joined</p>';
         getGames();
     })
     // displays messages in the public chat to all the players
     socket.on('lobby-chat', function (data) {
         typingDetector.innerHTML = '';
         chatOutput.innerHTML += '<p><strong>' + data.handle + ': </strong>' + data.message + '</p>';
+    })
+    // displays messages in the public chat to all the players
+    socket.on('game-started', function (data) {
+        chatOutput.innerHTML += '<p><strong>' + data + '</strong> has started</p>';
+        getGames();
     })
     // displays to other players that someone is typing
     socket.on('typing', function (data) {

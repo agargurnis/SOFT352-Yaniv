@@ -17,7 +17,8 @@ router.post('/create', (req, res) => {
         } else {
             const newTable = new Table({
                 name: req.body.name,
-                nrOfPlayers: req.body.nrOfPlayers
+                nrOfPlayers: req.body.nrOfPlayers,
+                started: false
             });
 
             newTable.save()
@@ -87,6 +88,33 @@ router.post('/leave', (req, res) => {
         }
     });
 });
+
+// Post api/game/start
+router.post('/start', (req, res) => {
+    // Find table by name
+    Table.findOne({
+            name: req.body.tableName
+        }).then(table => {
+            // Check for table
+            if (!table) {
+                return res.status(404).json({
+                    status: 'table not found'
+                });
+            }
+            // start the game
+            table.started = true;
+            // save it to the database
+            table.save().then(updatedTable => res.json({
+                    status: 'game successfully started'
+                }))
+                .catch(error => res.status(400).json({
+                    status: 'unable to start game'
+                }))
+        })
+        .catch(error => res.status(404).json({
+            status: 'no tables found'
+        }));
+})
 
 // GET api/game
 router.get('/', (req, res) => {

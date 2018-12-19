@@ -10,6 +10,10 @@ const TableSchema = new Schema({
     nrOfPlayers: {
         type: Number,
         required: true
+    },
+    started: {
+        type: Boolean,
+        required: true
     }
 });
 
