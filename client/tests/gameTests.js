@@ -69,9 +69,9 @@ QUnit.test("seat players accordingly around the table", function (assert) {
         $('#player-four')[0].innerHTML = playerArray[3].username == null ? '' : '<p>' + playerArray[3].username + '<br />5 cards</p>'
         $('#player-four-column')[0].innerHTML = playerArray[3].username == null ? '' : '<p><strong>' + playerArray[3].username + '</strong></p>'
     }
-
+    // call the function
     seatPlayers(table.players);
-
+    // test if the players are seated correctly
     assert.equal($('#player-one-column')[0].innerHTML, "<p><strong>player1</strong></p>", "player 1 is in the right place");
     assert.equal($('#player-two-column')[0].innerHTML, "<p><strong>player2</strong></p>", "player 2 is in the right place");
     assert.equal($('#player-three-column')[0].innerHTML, "<p><strong>player3</strong></p>", "player 3 is in the right place");
@@ -79,7 +79,7 @@ QUnit.test("seat players accordingly around the table", function (assert) {
 })
 
 QUnit.test("display who's turn is it and then finish the players turn and display the next player", function (assert) {
-    // check who is next 
+    // setup the functions to test
     function checkWhoIsNext(currentPlayer, unsortedPlayerArray) {
         var currentPlayerIndex = findIndexByKeyValue(unsortedPlayerArray, 'username', currentPlayer);
         if (unsortedPlayerArray.length == 2) {
@@ -108,14 +108,14 @@ QUnit.test("display who's turn is it and then finish the players turn and displa
             }
         }
     }
-    // finish your turn
+    // finish your turn function
     function finishMyTurn(currentPlayer) {
         var nextPlayerName = checkWhoIsNext(currentPlayer, table.players);
         var nextPlayerIndex = findIndexByKeyValue(table.players, 'username', nextPlayerName);
         nextPlayer = table.players[nextPlayerIndex].username;
         startNextTurn(currentPlayer, nextPlayer);
     }
-    // start next players turn
+    // start next players turn function
     function startNextTurn(previousPlayerUsername, nextPlayerUsername) {
         var nextPlayersIndex = findIndexByKeyValue(table.players, 'username', nextPlayerUsername);
         var previousPlayersIndex = findIndexByKeyValue(table.players, 'username', previousPlayerUsername);
@@ -123,7 +123,7 @@ QUnit.test("display who's turn is it and then finish the players turn and displa
         table.players[nextPlayersIndex].myTurn = true;
         displayWhosTurn();
     }
-    // setup function to test
+    // display who's turn function
     function displayWhosTurn() {
         $('.player').each(function () {
             var thisPlayer = $(this)[0];
@@ -144,25 +144,27 @@ QUnit.test("display who's turn is it and then finish the players turn and displa
             }
         }
     }
-
+    // call the initial function
     displayWhosTurn();
-
+    // test if it is player 3 turn just as initialised
     assert.notOk($('#player-one').hasClass('my-turn'), 'it is not player 1 turn');
     assert.notOk($('#player-two').hasClass('my-turn'), 'it is not player 2 turn');
     assert.ok($('#player-three').hasClass('my-turn'), 'it is player 3 turn');
     assert.notOk($('#player-four').hasClass('my-turn'), 'it is not player 4 turn');
-
+    // call the function which ends current players turn and passes it on to the next
     finishMyTurn('player3');
+    // display that the function was called successfully
     assert.step('player 3 finished their turn')
-
+    // test if the turn was passed on to the next player
     assert.notOk($('#player-one').hasClass('my-turn'), 'it is not player 1 turn');
     assert.notOk($('#player-two').hasClass('my-turn'), 'it is not player 2 turn');
     assert.notOk($('#player-three').hasClass('my-turn'), 'it is not player 3 turn');
     assert.ok($('#player-four').hasClass('my-turn'), 'it is player 4 turn');
-
+    // call the function which ends current players turn and passes it on to the next
     finishMyTurn('player4');
+    // display that the function was called successfully
     assert.step('player 4 finished their turn')
-
+    // test if the turn got passed from player 4 to player 1 which is at the beginning of the array
     assert.ok($('#player-one').hasClass('my-turn'), 'it is player 1 turn');
     assert.notOk($('#player-two').hasClass('my-turn'), 'it is not player 2 turn');
     assert.notOk($('#player-three').hasClass('my-turn'), 'it is not player 3 turn');
@@ -170,7 +172,7 @@ QUnit.test("display who's turn is it and then finish the players turn and displa
 })
 
 QUnit.test("shuffle the initial deck so the order of the cards are random", function (assert) {
-    // setup all the necesary function for testing 
+    // setup the necesary function for testing 
     function shuffleCards(array) {
         for (var i = array.length - 1; i > 0; i--) {
             var j = Math.floor(Math.random() * (i + 1));
@@ -179,10 +181,11 @@ QUnit.test("shuffle the initial deck so the order of the cards are random", func
             array[j] = temp;
         }
     }
-
+    // create a new array from the card deck
     shuffledDeck = Array.from(table.cards);
+    // call the function that shuffles the deck of cards that are passed in the function
     shuffleCards(shuffledDeck);
-
+    // test that the two decks are not the same
     assert.notEqual(shuffledDeck, table.cards, 'the cards have been shuffled successfuly');
 })
 
@@ -196,17 +199,14 @@ QUnit.test("select 2 cards and exchange them with a random card from the middle 
             array[j] = temp;
         }
     }
-
-    shuffledDeck = Array.from(table.cards);
-    shuffleCards(shuffledDeck);
-    // hand out cards 
+    // hand out cards function
     function dealCards(player, shuffledCards) {
         for (var i = 0; i < 5; i++) {
             var poppedCard = shuffledCards.pop();
             player.cardsOnHand.push(poppedCard);
         }
     }
-    // get rid of any extra cards if selected 
+    // get rid of any extra cards if selected function
     function discardExtraCards(swapArray, myCurrentCards) {
         // sort arrray in a descending order
         var sortedSwapArray = swapArray.sort(function (a, b) {
@@ -224,7 +224,7 @@ QUnit.test("select 2 cards and exchange them with a random card from the middle 
             myCurrentCards.splice(sortedSwapArray[2], 1);
         }
     }
-    // pick up a random card from the deck
+    // pick up a random card from the deck function
     function pickUpRandomCard(swapArray, myCurrentCards) {
         var randomCard = shuffledDeck.pop();
         var selectedCardIndex = swapArray[0];
@@ -235,29 +235,36 @@ QUnit.test("select 2 cards and exchange them with a random card from the middle 
             discardExtraCards(swapArray, myCurrentCards);
         }
     }
-
+    // create a new array from the card deck
+    shuffledDeck = Array.from(table.cards);
+    // call the function that shuffles the deck of cards that are passed in the function
+    shuffleCards(shuffledDeck);
+    // test that the player has no cards at the beginning of the round
     assert.equal(player1.cardsOnHand.length, 0, 'player 1 has no cards on his hand');
-
+    // call the function that would deal 5 random cards to the player
     dealCards(player1, shuffledDeck);
+    // display that the function was called successfully
     assert.step("player 1 gets dealt cards");
-
+    // test if the user did indeed receive 5 cards 
     assert.equal(player1.cardsOnHand.length, 5, 'player 1 has 5 cards on his hand');
-
-    assert.step("select 2 cards out of the players hands");
-
+    // create an array that holds the cards which will be discarded from the players hands
     var swapArray = new Array();
+    // add 2 cards to the array
     swapArray.push(player1.cardsOnHand[4]);
     swapArray.push(player1.cardsOnHand[5]);
-
-    assert.step("select a random card from the table and discard the 2 selected cards");
-
+    // display that there were 2 cards selected for testing purposes
+    assert.step("selected 2 cards out of the players hands");
+    // call the function that gets a random card and discards the cards the players selected on his hand
     pickUpRandomCard(swapArray, player1.cardsOnHand);
-
+    // display that the function was called successfully
+    assert.step("selected a random card from the table and discard3e the 2 selected cards");
+    // test if indeed 2 cards were discarded and 1 new card picked up
     assert.equal(player1.cardsOnHand.length, 4, 'player 1 has 4 cards on his hand now');
-
+    // test if the 1st discarded card is not still on the players hands
     for (var i = 0; i < 4; i++) {
         assert.notEqual(swapArray[0], player1.cardsOnHand[i], 'no cards match up with the discarded card one');
     }
+    // test if the 2nd discarded card is not still on the players hands
     for (var i = 0; i < 4; i++) {
         assert.notEqual(swapArray[1], player1.cardsOnHand[i], 'no cards match up with the discarded card two');
     }

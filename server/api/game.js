@@ -91,7 +91,7 @@ router.post('/leave', (req, res) => {
     });
 });
 
-// DELETE api/game/delete
+// POST api/game/delete
 router.post('/delete', (req, res) => {
     // Find table by name
     Table.findOne({
