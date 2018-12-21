@@ -1,6 +1,7 @@
-/* body {
+/* to see QUnit test results this has to be commented out */
+body {
   overflow: hidden;
-} */
+}
 
 #welcome-container,
 #lobby-container,

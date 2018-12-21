@@ -42,6 +42,7 @@ $(document).ready(function () {
             .catch(error => {
                 if (error == 'Error: Request failed with status code 400') {
                     if (window.confirm('It looks like you already have created a game! Are you sure you want to delete your old game and create a new one?')) {
+                        localStorage.removeItem(tableData.name);
                         deleteGame(tableData);
                     }
                 }
