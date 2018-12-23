@@ -148,12 +148,12 @@ $(document).ready(function () {
     })
     // notifies other players that a game is created
     socket.on('game-created', function (data) {
-        chatOutput.innerHTML += '<p><strong>' + data + '</strong> created a game</p>';
+        chatOutput.innerHTML += '<p><strong>' + data + ' created a game</strong></p>';
         getGames();
     })
     // notifies other players that a game is joined
     socket.on('game-joined', function (data) {
-        chatOutput.innerHTML += '<p><strong>' + data + '</strong> has been joined</p>';
+        chatOutput.innerHTML += '<p><strong>' + data + ' has been joined</strong></p>';
         getGames();
     })
     // displays messages in the public chat to all the players
@@ -163,7 +163,7 @@ $(document).ready(function () {
     })
     // displays messages in the public chat to all the players
     socket.on('game-started', function (data) {
-        chatOutput.innerHTML += '<p><strong>' + data + '</strong> has started</p>';
+        chatOutput.innerHTML += '<p><strong>' + data + ' has started</strong></p>';
         getGames();
     })
     // displays to other players that someone is typing

@@ -562,7 +562,7 @@ $(document).ready(function () {
     }
     // check if a player has less than 5 points so he can call Yaniv
     function checkWin() {
-        if (myPoints <= 20) {
+        if (myPoints <= 5) {
             callYanivBtn.classList.remove('hidden');
         } else {
             callYanivBtn.classList.add('hidden');
@@ -621,9 +621,9 @@ $(document).ready(function () {
     // check if any of the players have a score over 200 and announce a winner if there is only one left with less than 200 points
     function checkEndGame(playerArray) {
         for (var i = 0; i < playerArray.length; i++) {
-            if (playerArray[i].totalPoints >= 60 && loserArray.length == 0) {
+            if (playerArray[i].totalPoints >= 200 && loserArray.length == 0) {
                 loserArray.push(playerArray[i]);
-            } else if (playerArray[i].totalPoints >= 60 && loserArray.some(player => player.username == playerArray[i].username) == false) {
+            } else if (playerArray[i].totalPoints >= 200 && loserArray.some(player => player.username == playerArray[i].username) == false) {
                 loserArray.push(playerArray[i]);
                 console.log(loserArray);
             }

@@ -35,7 +35,6 @@ const player4 = {
     totalPoints: 0
 }
 table.players.push(player4);
-
 // query dom for buttons
 var gameSendBtn = $('#game-send-btn')[0];
 var startGameBtn = $('#start-game-btn')[0];
@@ -43,7 +42,6 @@ var leaveBtn = $('#leave-game')[0];
 var gameOverBtn = $('#leave-game-over')[0];
 var callYanivBtn = $('#call-yaniv')[0];
 var nextRoundBtn = $('#next-round')[0];
-
 // query dom cards
 var deckFront = $('#deck-front');
 var deckBack = $('#deck-back')[0];

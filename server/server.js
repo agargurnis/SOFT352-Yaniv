@@ -18,7 +18,7 @@ mongoose
     .catch(err => {
         console.log(err);
     });
-// app setup
+// express app setup
 const app = express();
 const server = app.listen(4000, function () {
     console.log("---> server listening to port 4000");
