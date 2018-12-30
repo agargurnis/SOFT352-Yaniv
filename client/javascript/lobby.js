@@ -29,7 +29,7 @@ $(document).ready(function () {
     function createGame() {
         var tableData = {
             "name": player["username"] + "-table",
-            "nrOfPlayers": 1
+            "username": player["username"]
         }
         axios
             .post('/api/game/create', tableData)
@@ -48,33 +48,52 @@ $(document).ready(function () {
                 }
             });
     }
-    // joins an already created game
-    function joinGame(tableId, tableName) {
-        // check if the user has previously visited the same game
-        var gameTable = JSON.parse(localStorage.getItem(tableName));
-        var tableData = {
-            "tableId": tableId
-        }
-        var thisTablePlayers = gameTable['players'];
-        for (var i = 0; i < thisTablePlayers.length; i++) {
-            // if the user already exists on table then redirect him to the game table
-            if (thisTablePlayers[i].username == player.username) {
-                window.location.href = "http://localhost:4000/game?table=" + tableName + "&name=" + player["username"];
-                return;
-            }
-        }
-        // else if its the first time then add him to the game object in the local storage and add the user to the database
+    // ajax function to join the game and save player to database
+    function axiosJoin(tableData, tableName) {
         axios
             .post('/api/game/join', tableData)
             .then(response => {
-                gameTable["players"].push(player);
-                localStorage.setItem(tableName, JSON.stringify(gameTable));
+                for (var i = 0; i < response.data.players.length; i++) {
+                    table["players"].push({
+                        username: response.data.players[i],
+                        cardsOnHand: new Array(),
+                        myTurn: false,
+                        pointsOnHand: 0,
+                        totalPoints: 0
+                    });
+                }
+                localStorage.setItem(tableName, JSON.stringify(table));
                 socket.emit('game-joined', tableName);
                 window.location.href = "http://localhost:4000/game?table=" + tableName + "&name=" + player["username"];
             })
             .catch(error =>
                 console.log(error)
             );
+    }
+    // joins an already created game
+    function joinGame(tableId, tableName) {
+        var tableData = {
+            "tableId": tableId,
+            "username": player["username"]
+        }
+        var gameTable = JSON.parse(localStorage.getItem(tableName));
+        // check if the user has previously visited the same game
+        if (gameTable !== null) {
+            var thisTablePlayers = gameTable['players'];
+            for (var i = 0; i < thisTablePlayers.length; i++) {
+                // if the user already exists on table then redirect him to the game table
+                if (thisTablePlayers[i].username == player['username']) {
+                    window.location.href = "http://localhost:4000/game?table=" + tableName + "&name=" + player["username"];
+                    return;
+                }
+            }
+            // if there is a local storage item with the same name but no player in it then join the game
+            axiosJoin(tableData, tableName);
+            return;
+        } else {
+            // else if its the first time then add him to the game object in the local storage and add the user to the database
+            axiosJoin(tableData, tableName);
+        }
     };
     // delete the table from database
     function deleteGame(tableData) {
@@ -106,7 +125,7 @@ $(document).ready(function () {
                 gameOutput.innerHTML = '';
                 response.data.map(table => {
                     if (table.started !== true) {
-                        gameOutput.innerHTML += '<p id="' + table._id + '" class="game-button pointer"><strong class="game-table-name">' + table.name + '</strong><br/>Players: ' + table.nrOfPlayers + '/4</p>';
+                        gameOutput.innerHTML += '<p id="' + table._id + '" class="game-button pointer"><strong class="game-table-name">' + table.name + '</strong><br/>Players: ' + table.players.length + '/4</p>';
                     }
                 });
                 setGameButtons();

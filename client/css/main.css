@@ -177,7 +177,7 @@ body {
 
 #send-btn,
 #game-send-btn {
-  width: 9.5%;
+  width: 9.4%;
 }
 
 #create-btn {
@@ -412,4 +412,134 @@ body {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+}
+
+@media only screen and (min-width: 2560px) {
+  #game-table-square {
+    width: 470px;
+    height: 470px;
+  }
+
+  #game-chat-window {
+    height: 17.5vh;
+  }
+
+  #point-window {
+    height: 94.8vh;
+  }
+
+  #player-one {
+    left: 200px;
+    top: 420px;
+  }
+
+  #player-two {
+    right: 30px;
+    top: 120px;
+  }
+
+  #player-three {
+    left: 195px;
+    bottom: 180px;
+  }
+
+  #player-four {
+    left: 420px;
+    bottom: 30px;
+  }
+
+  #deck-back {
+    left: 255px;
+    bottom: 275px;
+  }
+
+  #deck-front {
+    left: 150px;
+    bottom: 185px;
+  }
+
+  #call-yaniv {
+    left: 420px;
+    bottom: 140px;
+  }
+
+  #next-round {
+    left: 420px;
+    bottom: 140px;
+  }
+
+  #leave-game {
+    right: 30px;
+    bottom: 325px;
+  }
+
+  #start-game-btn {
+    left: 197px;
+    bottom: 175px;
+  }
+}
+
+@media only screen and (max-width: 1280px) {
+  #game-table-square {
+    width: 325px;
+    height: 325px;
+  }
+
+  #game-chat-window {
+    height: 6.5vh;
+  }
+
+  #point-window {
+    height: 89.8vh;
+  }
+
+  #player-one {
+    left: 125px;
+    top: 265px;
+  }
+
+  #player-two {
+    right: 30px;
+    top: 50px;
+  }
+
+  #player-three {
+    left: 125px;
+    bottom: 180px;
+  }
+
+  #player-four {
+    left: 285px;
+    bottom: 100px;
+  }
+
+  #deck-back {
+    left: 178px;
+    bottom: 348px;
+  }
+
+  #deck-front {
+    left: 85px;
+    bottom: 258px;
+  }
+
+  #call-yaniv {
+    left: 280px;
+    bottom: 290px;
+  }
+
+  #next-round {
+    left: 280px;
+    bottom: 290px;
+  }
+
+  #leave-game {
+    right: 30px;
+    bottom: 330px;
+  }
+
+  #start-game-btn {
+    left: 125px;
+    bottom: 250px;
+  }
 }

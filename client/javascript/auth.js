@@ -128,9 +128,7 @@ $(document).ready(function () {
         }
     });
     // successful login function
-    function login() {
-        player.username = usernameInput.value.toLowerCase();
-        localStorage.setItem(player.username, JSON.stringify(player));
+    function goToLobby() {
         window.location.href = "http://localhost:4000/lobby?name=" + player.username;
     }
     // unsuccessful login function
@@ -176,7 +174,9 @@ $(document).ready(function () {
                 .post('/api/auth/login', userData)
                 .then(response => {
                     if (response.status == 200) {
-                        login();
+                        player.username = usernameInput.value.toLowerCase();
+                        localStorage.setItem(player.username, JSON.stringify(player));
+                        goToLobby();
                     }
                 })
                 .catch(error => {

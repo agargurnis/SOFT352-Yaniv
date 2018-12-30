@@ -7,10 +7,7 @@ const TableSchema = new Schema({
         type: String,
         required: true
     },
-    nrOfPlayers: {
-        type: Number,
-        required: true
-    },
+    players: [String],
     started: {
         type: Boolean,
         required: true

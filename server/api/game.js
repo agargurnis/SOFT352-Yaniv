@@ -6,7 +6,6 @@ const Table = require('../models/Table');
 
 // GET api/game/create
 router.post('/create', (req, res) => {
-
     Table.findOne({
         name: req.body.name
     }).then(table => {
@@ -17,7 +16,7 @@ router.post('/create', (req, res) => {
         } else {
             const newTable = new Table({
                 name: req.body.name,
-                nrOfPlayers: req.body.nrOfPlayers,
+                players: [req.body.username],
                 started: false
             });
 
@@ -40,11 +39,11 @@ router.post('/join', (req, res) => {
                 });
             }
             // get current number of players 
-            currentNr = table.nrOfPlayers;
+            currentNr = table.players.length;
             // Check if the table is full
             if (currentNr < 4) {
                 // update table
-                table.nrOfPlayers = currentNr + 1;
+                table.players.push(req.body.username);
                 // save to db
                 table.save().then(updatedTable => res.json(updatedTable));
             } else {
@@ -68,11 +67,12 @@ router.post('/leave', (req, res) => {
             });
         }
         // get current number of players 
-        currentNr = table.nrOfPlayers;
+        currentNr = table.players.length;
         // Check if the table is full
         if (currentNr > 1) {
+            playerIndex = table.players.indexOf(req.body.username);
             // update table
-            table.nrOfPlayers = currentNr - 1;
+            table.players.splice(playerIndex, 1);
             // save to db
             table.save().then(updatedTable => res.json({
                 status: 'successfuly left the table'

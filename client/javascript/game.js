@@ -526,7 +526,8 @@ $(document).ready(function () {
     // update database when someone leaves the table
     function leaveTable() {
         var tableData = {
-            "tableName": tableKey
+            "tableName": tableKey,
+            "username": player['username']
         }
         axios
             .post('/api/game/leave', tableData)
@@ -536,6 +537,7 @@ $(document).ready(function () {
                     table: tableKey,
                     player: player
                 })
+                localStorage.removeItem(tableKey);
                 window.location.href = "http://localhost:4000/lobby?name=" + player.username;
             })
             .catch(error =>
@@ -562,7 +564,7 @@ $(document).ready(function () {
     }
     // check if a player has less than 5 points so he can call Yaniv
     function checkWin() {
-        if (myPoints <= 5) {
+        if (myPoints <= 10) {
             callYanivBtn.classList.remove('hidden');
         } else {
             callYanivBtn.classList.add('hidden');
@@ -621,11 +623,10 @@ $(document).ready(function () {
     // check if any of the players have a score over 200 and announce a winner if there is only one left with less than 200 points
     function checkEndGame(playerArray) {
         for (var i = 0; i < playerArray.length; i++) {
-            if (playerArray[i].totalPoints >= 200 && loserArray.length == 0) {
+            if (playerArray[i].totalPoints >= 100 && loserArray.length == 0) {
                 loserArray.push(playerArray[i]);
-            } else if (playerArray[i].totalPoints >= 200 && loserArray.some(player => player.username == playerArray[i].username) == false) {
+            } else if (playerArray[i].totalPoints >= 100 && loserArray.some(player => player.username == playerArray[i].username) == false) {
                 loserArray.push(playerArray[i]);
-                console.log(loserArray);
             }
         }
         if (loserArray.length >= 3) {
@@ -643,12 +644,7 @@ $(document).ready(function () {
     }
     // add event listner for the game over button
     gameOverBtn.addEventListener('click', function () {
-        if (thisTable['players'].length > 1) {
-            leaveTable();
-        } else {
-            localStorage.removeItem(tableKey);
-            leaveTable();
-        }
+        leaveTable();
     })
     // call yaniv to indicate that you think you might have won
     callYanivBtn.addEventListener('click', function () {
@@ -728,12 +724,7 @@ $(document).ready(function () {
     })
     // add event listner for button
     leaveBtn.addEventListener('click', function () {
-        if (thisTable['players'].length > 1) {
-            leaveTable();
-        } else {
-            localStorage.removeItem(tableKey);
-            leaveTable();
-        }
+        leaveTable();
     })
     // synchronize every deck so it has the same card in the pile as well as make sure each person has unique cards
     socket.on('shuffled-deck', function (data) {
@@ -804,6 +795,7 @@ $(document).ready(function () {
         }
         // else add the new player
         thisTable['players'].push(data)
+        localStorage.setItem(tableKey, JSON.stringify(thisTable));
         sortPlayers(thisTable['players']);
     })
     // remove player from each player array
