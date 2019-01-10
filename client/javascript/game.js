@@ -564,7 +564,7 @@ $(document).ready(function () {
     }
     // check if a player has less than 5 points so he can call Yaniv
     function checkWin() {
-        if (myPoints <= 10) {
+        if (myPoints <= 5) {
             callYanivBtn.classList.remove('hidden');
         } else {
             callYanivBtn.classList.add('hidden');
@@ -623,13 +623,13 @@ $(document).ready(function () {
     // check if any of the players have a score over 200 and announce a winner if there is only one left with less than 200 points
     function checkEndGame(playerArray) {
         for (var i = 0; i < playerArray.length; i++) {
-            if (playerArray[i].totalPoints >= 100 && loserArray.length == 0) {
+            if (playerArray[i].totalPoints >= 200 && loserArray.length == 0) {
                 loserArray.push(playerArray[i]);
-            } else if (playerArray[i].totalPoints >= 100 && loserArray.some(player => player.username == playerArray[i].username) == false) {
+            } else if (playerArray[i].totalPoints >= 200 && loserArray.some(player => player.username == playerArray[i].username) == false) {
                 loserArray.push(playerArray[i]);
             }
         }
-        if (loserArray.length >= 3) {
+        if (loserArray.length >= thisTable['players'].length - 1) {
             var winningArray = Array.from(playerArray);
             // sort arrray in a ascending order
             var sortedWinningArray = winningArray.sort(function (a, b) {
@@ -760,12 +760,12 @@ $(document).ready(function () {
         updateCounter++;
 
         if (thisTable['players'].length == 2 && updateCounter == 2) {
-            displayScoreBoardPoints(sortedArray);
+            comparePoints(sortedArray);
             resetTable();
             updateCounter = 0;
         }
         if (thisTable['players'].length == 3 && updateCounter == 3) {
-            displayScoreBoardPoints(sortedArray);
+            comparePoints(sortedArray);
             resetTable();
             updateCounter = 0;
         }
